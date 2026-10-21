@@ -157,6 +157,10 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 .slotrow.auto{border-style:dashed}
 .file-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
 .file-row button,.file-row label{font-family:var(--display);font-size:16px;border:2px solid var(--line);background:var(--ink-2);border-radius:12px;padding:8px 14px;cursor:pointer}
+.lang-row{display:flex;justify-content:flex-end;gap:4px;margin:-8px -8px 4px 0}
+.lang-opt{font-size:14px;border:2px solid var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:4px 10px}
+.lang-opt.on{background:var(--gold);color:#4a2c00;border-color:transparent}
+.lang-mini{font-family:var(--display);font-size:15px;color:#fff}
 .title-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .item.shake,.card.shake{animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -251,26 +255,27 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 </style>
 
 <div id="app">
-  <canvas id="game" tabindex="0" aria-label="게임 화면"></canvas>
+  <canvas id="game" tabindex="0" aria-label="게임 화면" data-en-aria="Game screen"></canvas>
 
   <div id="hud" hidden>
     <div class="pbar" id="pbar"></div>
     <div class="hud-right" id="hudRight">
       <button class="shop-btn bag-btn" id="bagBtn">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V6a5 5 0 0110 0v2" fill="none" stroke="#2e1a08" stroke-width="2"/><path d="M4 8h16l-1 13H5z" fill="#7a4a24"/><path d="M9 12h6v3H9z" fill="#ffcf3f"/></svg>
-        가방
+        <span data-en="Bag">가방</span>
       </button>
       <button class="shop-btn" id="shopBtn">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-2 11H5z" fill="#8a4b10"/><path d="M2 5h20v4H2z" fill="#d94c3d"/><path d="M6 5h3v4H6zM12 5h3v4h-3zM18 5h3v4h-3z" fill="#fff"/><path d="M10 13h4v7h-4z" fill="#ffe08a"/></svg>
-        상점
+        <span data-en="Shop">상점</span>
       </button>
-      <button class="icon-btn" id="soundBtn" aria-label="소리 끄기/켜기">
+      <button class="icon-btn lang-mini" id="langBtn" aria-label="Language / 언어">EN</button>
+      <button class="icon-btn" id="soundBtn" aria-label="소리 끄기/켜기" data-en-aria="Sound on/off">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path id="sndOn" d="M3 9h4l5-4v14l-5-4H3zM15 8a5 5 0 010 8M17.5 5.5a9 9 0 010 13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path id="sndOff" hidden d="M3 9h4l5-4v14l-5-4H3zM16 9l6 6M22 9l-6 6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <button class="icon-btn" id="saveBtn" aria-label="저장하기" title="저장하기">
+      <button class="icon-btn" id="saveBtn" aria-label="저장하기" title="저장하기" data-en-aria="Save">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h13l3 3v13H4z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M8 4v5h8V4M7 20v-6h10v6" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
       </button>
-      <button class="icon-btn" id="homeBtn" aria-label="처음 화면으로">
+      <button class="icon-btn" id="homeBtn" aria-label="처음 화면으로" data-en-aria="Back to title">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7M5 10v10h5v-6h4v6h5V10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -281,12 +286,12 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 
   <div id="touch" hidden>
     <div class="dpad">
-      <button data-d="up" aria-label="위">▲</button><button data-d="left" aria-label="왼쪽">◀</button>
-      <button data-d="right" aria-label="오른쪽">▶</button><button data-d="down" aria-label="아래">▼</button>
+      <button data-d="up" aria-label="위" data-en-aria="Up">▲</button><button data-d="left" aria-label="왼쪽" data-en-aria="Left">◀</button>
+      <button data-d="right" aria-label="오른쪽" data-en-aria="Right">▶</button><button data-d="down" aria-label="아래" data-en-aria="Down">▼</button>
     </div>
     <div class="acts">
-      <button class="small" id="tPot">물약</button><button class="small" id="tSwap">바꾸기</button><span></span>
-      <button id="tGrab">줍기</button><button id="tDig">파기</button>
+      <button class="small" id="tPot" data-en="Potion">물약</button><button class="small" id="tSwap" data-en="Swap">바꾸기</button><span></span>
+      <button id="tGrab" data-en="Grab">줍기</button><button id="tDig" data-en="Dig">파기</button>
     </div>
   </div>
 
@@ -295,29 +300,32 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
   <!-- Title -->
   <div id="title" class="overlay">
     <div class="card">
+      <div class="lang-row" role="group" aria-label="Language / 언어">
+        <button class="lang-opt" data-lang="ko">한국어</button><button class="lang-opt" data-lang="en">English</button>
+      </div>
       <div class="logo">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#2fc8ec"/><path d="M6 3h12l4 6H2z" fill="#9cf4ff"/><path d="M2 9h6l4 12z" fill="#1e9fd0"/><path d="M16 9h6L12 21z" fill="#55dcf7"/><path d="M7 4.5h2.5L8 7.5z" fill="#fff"/></svg>
-        <h1>다이아몬드 탐험대</h1>
+        <h1 data-en="Diamond Explorers">다이아몬드 탐험대</h1>
       </div>
-      <p class="lead">땅을 파고, 수학 문제를 풀어 다이아몬드를 모아요. 장비와 펫을 모으고, Lv.6부터 나타나는 몬스터와 싸워 전설의 탐험대가 되어 보세요!</p>
+      <p class="lead" data-en="Dig the ground and solve math problems to collect diamonds. Gather gear and pets, then battle the monsters that appear from Lv.6 to become legendary explorers!">땅을 파고, 수학 문제를 풀어 다이아몬드를 모아요. 장비와 펫을 모으고, Lv.6부터 나타나는 몬스터와 싸워 전설의 탐험대가 되어 보세요!</p>
       <div class="title-btns">
         <button class="big-btn" id="continueBtn" hidden>이어서 하기</button>
-        <button class="big-btn" id="loadBtn" style="background:#5ee7ff;color:#063a4f;box-shadow:0 5px 0 #1e9fd0">불러오기</button>
+        <button class="big-btn" id="loadBtn" style="background:#5ee7ff;color:#063a4f;box-shadow:0 5px 0 #1e9fd0" data-en="Load">불러오기</button>
       </div>
       <div id="stepMode">
-        <h2>몇 명이 할까요?</h2>
+        <h2 data-en="How many players?">몇 명이 할까요?</h2>
         <div class="pick">
-          <button class="mode" data-m="1"><canvas width="128" height="96"></canvas>혼자 하기<small>1인용</small></button>
-          <button class="mode" data-m="2"><canvas width="128" height="96"></canvas>둘이 하기<small>한 키보드로 2인용</small></button>
+          <button class="mode" data-m="1"><canvas width="128" height="96"></canvas><span data-en="Solo<small>1 player</small>">혼자 하기<small>1인용</small></span></button>
+          <button class="mode" data-m="2"><canvas width="128" height="96"></canvas><span data-en="Two players<small>2 players, one keyboard</small>">둘이 하기<small>한 키보드로 2인용</small></span></button>
         </div>
       </div>
       <div id="stepHero" hidden>
         <h2 id="heroQ">누구로 탐험할까요?</h2>
         <div class="pick">
-          <button class="hero" data-g="boy"><canvas width="96" height="96"></canvas>남자 탐험가</button>
-          <button class="hero" data-g="girl"><canvas width="96" height="96"></canvas>여자 탐험가</button>
+          <button class="hero" data-g="boy"><canvas width="96" height="96"></canvas><span data-en="Boy explorer">남자 탐험가</span></button>
+          <button class="hero" data-g="girl"><canvas width="96" height="96"></canvas><span data-en="Girl explorer">여자 탐험가</span></button>
         </div>
-        <button class="link-btn" id="backBtn">뒤로</button>
+        <button class="link-btn" id="backBtn" data-en="Back">뒤로</button>
       </div>
       <ul class="keys" id="titleKeys"></ul>
     </div>
@@ -325,11 +333,11 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 
   <!-- Shop -->
   <div id="shop" class="overlay" hidden>
-    <div class="card" role="dialog" aria-label="광부 상점">
+    <div class="card" role="dialog" aria-label="광부 상점" data-en-aria="Miner's shop">
       <div class="shop-head">
-        <h2>광부 상점</h2>
+        <h2 data-en="Miner&#39;s Shop">광부 상점</h2>
         <div class="wallet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#2fc8ec"/><path d="M6 3h12l4 6H2z" fill="#9cf4ff"/><path d="M2 9h6l4 12z" fill="#1e9fd0"/><path d="M16 9h6L12 21z" fill="#55dcf7"/></svg><span id="shopGems">0</span></div>
-        <button class="icon-btn" id="shopClose" aria-label="상점 닫기"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" id="shopClose" aria-label="상점 닫기" data-en-aria="Close shop"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
       </div>
       <div class="items" id="items"></div>
       <div class="shop-foot" id="shopFoot"></div>
@@ -338,20 +346,20 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 
   <!-- Inventory -->
   <div id="inv" class="overlay" hidden>
-    <div class="card" role="dialog" aria-label="가방">
+    <div class="card" role="dialog" aria-label="가방" data-en-aria="Bag">
       <div class="shop-head">
-        <h2>가방</h2>
+        <h2 data-en="Bag">가방</h2>
         <div class="tabs" id="invTabs"><button data-i="0">1P</button><button data-i="1">2P</button></div>
-        <button class="icon-btn" id="invClose" aria-label="가방 닫기" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" id="invClose" aria-label="가방 닫기" data-en-aria="Close bag" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
       </div>
       <div class="inv-body">
         <div class="doll-wrap">
           <div class="doll" id="doll">
-            <div class="slot s-head" data-slot="head"><label>머리</label></div>
-            <div class="slot s-weapon" data-slot="weapon"><label>무기</label></div>
-            <div class="slot s-armor" data-slot="armor"><label>갑옷</label></div>
-            <div class="slot s-feet" data-slot="feet"><label>신발</label></div>
-            <div class="slot s-tool" id="toolSlot"><label>파기 도구</label></div>
+            <div class="slot s-head" data-slot="head"><label data-en="Head">머리</label></div>
+            <div class="slot s-weapon" data-slot="weapon"><label data-en="Weapon">무기</label></div>
+            <div class="slot s-armor" data-slot="armor"><label data-en="Armor">갑옷</label></div>
+            <div class="slot s-feet" data-slot="feet"><label data-en="Feet">신발</label></div>
+            <div class="slot s-tool" id="toolSlot"><label data-en="Digging tool">파기 도구</label></div>
           </div>
           <div class="pstats" id="pstats"></div>
         </div>
@@ -359,9 +367,9 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
           <div class="bag" id="bag"></div>
           <div class="under">
             <div class="beltbox" id="beltbox"></div>
-            <div class="sell" id="sell">여기에 놓으면<br>산 값의 70%에 팔기</div>
+            <div class="sell" id="sell" data-en="Drop here to<br>sell for 70%">여기에 놓으면<br>산 값의 70%에 팔기</div>
           </div>
-          <div class="inv-help">물건을 <b>클릭</b>해서 집고, 다른 칸이나 몸(장비 칸)을 클릭해 놓아요. <b>오른쪽 클릭</b>이나 <b>두 번 클릭</b>하면 바로 장착해요. <kbd>I</kbd> 또는 <kbd>Esc</kbd> 로 닫기</div>
+          <div class="inv-help" data-en="&lt;b&gt;Click&lt;/b&gt; an item to pick it up, then click another spot or an equipment slot to put it down. &lt;b&gt;Right-click&lt;/b&gt; or &lt;b&gt;double-click&lt;/b&gt; to equip right away. Close with &lt;kbd&gt;I&lt;/kbd&gt; or &lt;kbd&gt;Esc&lt;/kbd&gt;">물건을 <b>클릭</b>해서 집고, 다른 칸이나 몸(장비 칸)을 클릭해 놓아요. <b>오른쪽 클릭</b>이나 <b>두 번 클릭</b>하면 바로 장착해요. <kbd>I</kbd> 또는 <kbd>Esc</kbd> 로 닫기</div>
         </div>
       </div>
     </div>
@@ -371,31 +379,31 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 
   <!-- Quiz -->
   <div id="quiz" class="overlay" hidden>
-    <div class="card" id="qCard" role="dialog" aria-label="수학 문제">
+    <div class="card" id="qCard" role="dialog" aria-label="수학 문제" data-en-aria="Math problem">
       <div class="q-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#2fc8ec"/><path d="M6 3h12l4 6H2z" fill="#9cf4ff"/></svg><span id="qTitle">문제를 풀면 다이아몬드!</span></div>
-      <div class="q-prob"><span id="qText">7 × 8</span><span>=</span><input id="qIn" type="text" inputmode="numeric" autocomplete="off" maxlength="3" aria-label="정답"></div>
+      <div class="q-prob"><span id="qText">7 × 8</span><span>=</span><input id="qIn" type="text" inputmode="numeric" autocomplete="off" maxlength="3" aria-label="정답" data-en-aria="Answer"></div>
       <div class="q-msg" id="qMsg"></div>
       <div class="pad" id="pad">
         <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button>
-        <button>7</button><button>8</button><button>9</button><button data-k="del">지우기</button><button>0</button><button class="ok" data-k="ok">확인</button>
+        <button>7</button><button>8</button><button>9</button><button data-k="del" data-en="Delete">지우기</button><button>0</button><button class="ok" data-k="ok" data-en="OK">확인</button>
       </div>
       <div class="streak" id="qStreak"></div>
-      <button class="link-btn" id="qLater">나중에 줍기 (Esc)</button>
+      <button class="link-btn" id="qLater" data-en="Pick up later (Esc)">나중에 줍기 (Esc)</button>
     </div>
   </div>
 
   <!-- Save / load slots -->
   <div id="saves" class="overlay" hidden>
-    <div class="card" role="dialog" aria-label="저장과 불러오기">
+    <div class="card" role="dialog" aria-label="저장과 불러오기" data-en-aria="Save and load">
       <div class="shop-head">
         <h2 id="savesTitle">저장하기</h2>
-        <button class="icon-btn" id="savesClose" aria-label="닫기" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" id="savesClose" aria-label="닫기" data-en-aria="Close" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
       </div>
       <p class="lead" id="savesLead" style="margin:0"></p>
       <div class="slots" id="slots"></div>
       <div class="file-row">
-        <button id="exportBtn">파일로 내보내기</button>
-        <label for="importFile">파일에서 불러오기</label>
+        <button id="exportBtn" data-en="Export to file">파일로 내보내기</button>
+        <label for="importFile" data-en="Load from file">파일에서 불러오기</label>
         <input type="file" id="importFile" accept=".json,application/json" hidden>
       </div>
     </div>
@@ -408,7 +416,7 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
       <h1 id="mTitle">레벨 업!</h1>
       <p class="lead" id="mText"></p>
       <div class="stats" id="mStats"></div>
-      <button class="big-btn" id="mClose">계속 탐험하기</button>
+      <button class="big-btn" id="mClose" data-en="Keep exploring">계속 탐험하기</button>
     </div>
   </div>
 </div>
@@ -416,105 +424,123 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 <script>
 (() => {
 'use strict';
+/* language: Korean or English, remembered per browser */
+const LANG_KEY='diamond-explorers-lang';
+let LANG=(()=>{ try{ const v=localStorage.getItem(LANG_KEY); if(v==='ko'||v==='en') return v; }catch(e){} return /^ko/i.test(navigator.language||'ko')?'ko':'en'; })();
+const tr=(ko,en)=>LANG==='en'?en:ko;
 const W = 56, H = 40;
 const SAVE_KEY = 'diamond-explorers-v4';
 const OLD_KEYS = ['diamond-explorers-v3','diamond-explorers-v2'];
 const MAX_LV = 10;
 const TOOLS = [
-  { id:'hand',    name:'손',     price:0,  hits:10 },
-  { id:'shovel',  name:'삽',     price:10, hits:6 },
-  { id:'hammer',  name:'망치',   price:20, hits:5 },
-  { id:'axe',     name:'도끼',   price:30, hits:3 },
-  { id:'pickaxe', name:'곡괭이', price:40, hits:1 },
+  { id:'hand',    name:'손', nameEn:'Hand',price:0,  hits:10 },
+  { id:'shovel',  name:'삽', nameEn:'Shovel',price:10, hits:6 },
+  { id:'hammer',  name:'망치', nameEn:'Hammer',price:20, hits:5 },
+  { id:'axe',     name:'도끼', nameEn:'Axe',price:30, hits:3 },
+  { id:'pickaxe', name:'곡괭이', nameEn:'Pickaxe',price:40, hits:1 },
 ];
-const RAR = [['일반','#ffffff'],['마법','#7fa8ff'],['희귀','#ffd84a'],['전설','#ff9f43']];
+const RAR_KO = [['일반','#ffffff'],['마법','#7fa8ff'],['희귀','#ffd84a'],['전설','#ff9f43']];
+const RAR_EN = [['Common','#ffffff'],['Magic','#7fa8ff'],['Rare','#ffd84a'],['Legendary','#ff9f43']];
+const RAR = new Proxy([],{ get:(_,k)=>(LANG==='en'?RAR_EN:RAR_KO)[k] });
 /* gear lives in the bag (Diablo-style grid) and is worn per player */
 const GEAR = {
-  sword_wood:   { name:'나무 검',     slot:'weapon', w:1,h:3, r:0, atk:'melee', dmg:3,  cd:.40 },
-  sword_iron:   { name:'철 검',       slot:'weapon', w:1,h:3, r:1, atk:'melee', dmg:6,  cd:.38 },
-  sword_dia:    { name:'다이아 검',   slot:'weapon', w:1,h:3, r:2, atk:'melee', dmg:12, cd:.34 },
-  bow:          { name:'사냥꾼 활',   slot:'weapon', w:2,h:3, r:0, atk:'arrow', dmg:4,  cd:.55, range:7 },
-  bow_legend:   { name:'전설의 활',   slot:'weapon', w:2,h:3, r:3, atk:'arrow', dmg:9,  cd:.45, range:8, multi:3 },
-  gun:          { name:'모험가 총',   slot:'weapon', w:2,h:2, r:1, atk:'bullet', dmg:6, cd:.28, range:8 },
-  staff:        { name:'별빛 지팡이', slot:'weapon', w:1,h:4, r:2, atk:'magic', dmg:10, cd:.7,  range:6 },
-  armor_leather:{ name:'가죽 갑옷',   slot:'armor',  w:2,h:3, r:0, def:1 },
-  armor_iron:   { name:'철 갑옷',     slot:'armor',  w:2,h:3, r:1, def:3 },
-  armor_dia:    { name:'다이아 갑옷', slot:'armor',  w:2,h:3, r:2, def:6, hp:20 },
-  boots:        { name:'운동화',      slot:'feet',   w:2,h:2, r:0, spd:.15 },
-  boots_bolt:   { name:'번개 신발',   slot:'feet',   w:2,h:2, r:2, spd:.35 },
-  helmet:       { name:'기사 투구',   slot:'head',   w:2,h:2, r:1, def:2 },
-  crown:        { name:'황금 왕관',   slot:'head',   w:2,h:2, r:3, gem2:true },
+  sword_wood:   { name:'나무 검', nameEn:'Wooden Sword',     slot:'weapon', w:1,h:3, r:0, atk:'melee', dmg:3,  cd:.40 },
+  sword_iron:   { name:'철 검', nameEn:'Iron Sword',       slot:'weapon', w:1,h:3, r:1, atk:'melee', dmg:6,  cd:.38 },
+  sword_dia:    { name:'다이아 검', nameEn:'Diamond Sword',   slot:'weapon', w:1,h:3, r:2, atk:'melee', dmg:12, cd:.34 },
+  bow:          { name:'사냥꾼 활', nameEn:'Hunter Bow',   slot:'weapon', w:2,h:3, r:0, atk:'arrow', dmg:4,  cd:.55, range:7 },
+  bow_legend:   { name:'전설의 활', nameEn:'Legendary Bow',   slot:'weapon', w:2,h:3, r:3, atk:'arrow', dmg:9,  cd:.45, range:8, multi:3 },
+  gun:          { name:'모험가 총', nameEn:'Explorer Gun',   slot:'weapon', w:2,h:2, r:1, atk:'bullet', dmg:6, cd:.28, range:8 },
+  staff:        { name:'별빛 지팡이', nameEn:'Starlight Staff', slot:'weapon', w:1,h:4, r:2, atk:'magic', dmg:10, cd:.7,  range:6 },
+  armor_leather:{ name:'가죽 갑옷', nameEn:'Leather Armor',   slot:'armor',  w:2,h:3, r:0, def:1 },
+  armor_iron:   { name:'철 갑옷', nameEn:'Iron Armor',     slot:'armor',  w:2,h:3, r:1, def:3 },
+  armor_dia:    { name:'다이아 갑옷', nameEn:'Diamond Armor', slot:'armor',  w:2,h:3, r:2, def:6, hp:20 },
+  boots:        { name:'운동화', nameEn:'Sneakers',      slot:'feet',   w:2,h:2, r:0, spd:.15 },
+  boots_bolt:   { name:'번개 신발', nameEn:'Lightning Boots',   slot:'feet',   w:2,h:2, r:2, spd:.35 },
+  helmet:       { name:'기사 투구', nameEn:'Knight Helmet',   slot:'head',   w:2,h:2, r:1, def:2 },
+  crown:        { name:'황금 왕관', nameEn:'Golden Crown',   slot:'head',   w:2,h:2, r:3, gem2:true },
 };
-const FIST = { name:'주먹', atk:'melee', dmg:1, cd:.4 };
+const FIST = { name:'주먹', nameEn:'Fists', atk:'melee', dmg:1, cd:.4 };
 const CATALOG = [
-  ...TOOLS.slice(1).map(t=>({ ...t, kind:'tool', lv:1, desc: t.hits===1 ? '단 한 번에 땅 파기!' : `${t.hits}번 파면 한 칸` })),
-  { id:'dog',     kind:'pet',  lv:2, name:'강아지',   price:50,  desc:'팀 공격력 +2. 가까운 몬스터를 콱 물어 줘요' },
-  { id:'cat',     kind:'pet',  lv:2, name:'고양이',   price:60,  desc:'땅속 다이아몬드를 분홍빛으로 알려 주고 방어력 +1' },
-  { id:'cheetah', kind:'pet',  lv:2, name:'치타',     price:70,  desc:'함께 달려서 이동 속도가 50% 빨라져요' },
-  { id:'radar',   kind:'item', lv:3, name:'다이아 레이더', price:60, desc:'가장 가까운 다이아몬드 쪽을 화살표로 알려 줘요' },
-  { id:'crown',   kind:'gear', lv:3, price:80,  desc:'머리에 쓰면 주운 다이아몬드가 2배가 돼요' },
-  { id:'meadow',  kind:'map',  lv:3, name:'초원',      price:0,   desc:'처음 시작한 초록 들판' },
-  { id:'snow',    kind:'map',  lv:3, name:'얼음 나라 지도', price:100, desc:'눈과 얼음의 새 땅. 한 칸에 다이아몬드가 더 많아요' },
-  { id:'desert',  kind:'map',  lv:3, name:'사막 나라 지도', price:120, desc:'모래 언덕과 오아시스의 땅. 다이아몬드가 훨씬 많아요' },
-  { id:'drill',   kind:'item', lv:4, name:'다이아 드릴', price:150, desc:'한 번 팔 때 주변 9칸을 한꺼번에 파요' },
-  { id:'dragon',  kind:'pet',  lv:4, name:'아기 용',  price:200, desc:'날아다니며 땅을 파서 다이아몬드를 찾아 주고, 몬스터에게 불을 뿜어요' },
-  { id:'candy',   kind:'map',  lv:4, name:'사탕 나라 지도', price:250, desc:'솜사탕 들판과 사탕 산. 다이아몬드가 가장 많아요' },
-  { id:'sword_wood',    kind:'gear', lv:5, price:40,  desc:'처음 쓰기 좋은 근거리 무기' },
-  { id:'armor_leather', kind:'gear', lv:5, price:50,  desc:'몬스터 공격을 조금 막아 줘요' },
-  { id:'boots',         kind:'gear', lv:5, price:60,  desc:'발이 가벼워져요' },
-  { id:'bow',           kind:'gear', lv:5, price:100, desc:'멀리 있는 몬스터를 쏴요. 화살이 필요해요' },
-  { id:'arrows',  kind:'consume', lv:5, name:'화살 20개', price:20, desc:'활로 쏠 화살이에요', add:{arrows:20} },
-  { id:'potS',    kind:'consume', lv:5, name:'작은 물약', price:15, desc:'HP를 30 채워 줘요', add:{potS:1} },
-  { id:'sword_iron',    kind:'gear', lv:6, price:120, desc:'튼튼하고 날카로운 검' },
-  { id:'armor_iron',    kind:'gear', lv:6, price:150, desc:'든든한 철 갑옷' },
-  { id:'gun',           kind:'gear', lv:6, price:180, desc:'빠르게 쏘는 원거리 무기. 총알이 필요해요' },
-  { id:'bullets', kind:'consume', lv:6, name:'총알 20개', price:30, desc:'총에 넣는 총알이에요', add:{bullets:20} },
-  { id:'potL',    kind:'consume', lv:6, name:'큰 물약', price:40, desc:'HP를 가득 채워 줘요', add:{potL:1} },
-  { id:'unicorn', kind:'pet',  lv:6, name:'유니콘', price:250, desc:'팀 최대 HP +20, HP가 저절로 계속 차올라요' },
-  { id:'helmet',        kind:'gear', lv:7, price:150, desc:'머리를 지켜 줘요' },
-  { id:'boots_bolt',    kind:'gear', lv:7, price:220, desc:'번개처럼 빨라지는 신발' },
-  { id:'turtle',  kind:'pet',  lv:7, name:'거북이', price:300, desc:'팀 방어력 +3. 단단한 등껍질 친구' },
-  { id:'sword_dia',     kind:'gear', lv:8, price:400, desc:'반짝이는 다이아몬드 검' },
-  { id:'armor_dia',     kind:'gear', lv:8, price:450, desc:'최강 갑옷. 최대 HP +20' },
-  { id:'staff',         kind:'gear', lv:8, price:500, desc:'별빛 마법을 쏴요. 탄약이 필요 없어요' },
-  { id:'bow_legend',    kind:'gear', lv:9, price:600, desc:'한 번에 화살 3발! (화살은 1개만 써요)' },
-  { id:'phoenix', kind:'pet',  lv:9, name:'불사조', price:700, desc:'팀 공격력 +3. 쓰러지면 한 번 되살려 줘요 (90초마다)' },
-  { id:'trophy',  kind:'item', lv:10, name:'전설의 트로피', price:1000, desc:'진짜 탐험대만 가질 수 있는 트로피. 사면 게임 클리어!' },
-].map(c=>c.kind==='gear'?{ ...c, name:GEAR[c.id].name }:c);
-const SEC_NAME = ['', '도구', '펫 친구', '탐험 장비와 새 지도', '새 나라와 아기 용', '전투 준비', '몬스터 사냥', '기사의 장비', '다이아 장비', '전설의 힘', '최후의 보물'];
-const LV_NAME = ['', '초보 광부', '펫 조련사', '탐험 대장', '새 나라 개척자', '전사 훈련생', '몬스터 사냥꾼', '용감한 기사', '다이아 영웅', '전설의 용사', '전설의 탐험대'];
+  ...TOOLS.slice(1).map(t=>({ ...t, kind:'tool', lv:1, desc: t.hits===1 ? '단 한 번에 땅 파기!' : `${t.hits}번 파면 한 칸`, descEn: t.hits===1 ? 'Digs a tile in one hit!' : `${t.hits} hits to dig a tile` })),
+  { id:'dog',     kind:'pet',  lv:2, name:'강아지',   price:50,  desc:'팀 공격력 +2. 가까운 몬스터를 콱 물어 줘요', nameEn:'Puppy', descEn:'Team attack +2. Bites nearby monsters' },
+  { id:'cat',     kind:'pet',  lv:2, name:'고양이',   price:60,  desc:'땅속 다이아몬드를 분홍빛으로 알려 주고 방어력 +1', nameEn:'Kitty', descEn:'Shows buried diamonds with a pink glow. Defense +1' },
+  { id:'cheetah', kind:'pet',  lv:2, name:'치타',     price:70,  desc:'함께 달려서 이동 속도가 50% 빨라져요', nameEn:'Cheetah', descEn:'Runs with you: move 50% faster' },
+  { id:'radar',   kind:'item', lv:3, name:'다이아 레이더', price:60, desc:'가장 가까운 다이아몬드 쪽을 화살표로 알려 줘요', nameEn:'Diamond Radar', descEn:'An arrow points to the nearest diamond' },
+  { id:'crown',   kind:'gear', lv:3, price:80,  desc:'머리에 쓰면 주운 다이아몬드가 2배가 돼요', descEn:'Wear it to get double diamonds' },
+  { id:'meadow',  kind:'map',  lv:3, name:'초원',      price:0,   desc:'처음 시작한 초록 들판', nameEn:'Meadow', descEn:'The green fields where it all began' },
+  { id:'snow',    kind:'map',  lv:3, name:'얼음 나라 지도', price:100, desc:'눈과 얼음의 새 땅. 한 칸에 다이아몬드가 더 많아요', nameEn:'Ice Land Map', descEn:'A new land of snow and ice. More diamonds per tile' },
+  { id:'desert',  kind:'map',  lv:3, name:'사막 나라 지도', price:120, desc:'모래 언덕과 오아시스의 땅. 다이아몬드가 훨씬 많아요', nameEn:'Desert Land Map', descEn:'Sand dunes and oases. Many more diamonds' },
+  { id:'drill',   kind:'item', lv:4, name:'다이아 드릴', price:150, desc:'한 번 팔 때 주변 9칸을 한꺼번에 파요', nameEn:'Diamond Drill', descEn:'Digs all 9 tiles around you at once' },
+  { id:'dragon',  kind:'pet',  lv:4, name:'아기 용',  price:200, desc:'날아다니며 땅을 파서 다이아몬드를 찾아 주고, 몬스터에게 불을 뿜어요', nameEn:'Baby Dragon', descEn:'Flies around digging up diamonds and breathes fire at monsters' },
+  { id:'candy',   kind:'map',  lv:4, name:'사탕 나라 지도', price:250, desc:'솜사탕 들판과 사탕 산. 다이아몬드가 가장 많아요', nameEn:'Candy Land Map', descEn:'Cotton candy fields and candy mountains. The most diamonds' },
+  { id:'sword_wood',    kind:'gear', lv:5, price:40,  desc:'처음 쓰기 좋은 근거리 무기', descEn:'A good first melee weapon' },
+  { id:'armor_leather', kind:'gear', lv:5, price:50,  desc:'몬스터 공격을 조금 막아 줘요', descEn:'Blocks a little monster damage' },
+  { id:'boots',         kind:'gear', lv:5, price:60,  desc:'발이 가벼워져요', descEn:'Light on your feet' },
+  { id:'bow',           kind:'gear', lv:5, price:100, desc:'멀리 있는 몬스터를 쏴요. 화살이 필요해요', descEn:'Shoots faraway monsters. Needs arrows' },
+  { id:'arrows',  kind:'consume', lv:5, name:'화살 20개', price:20, desc:'활로 쏠 화살이에요', nameEn:'20 Arrows', descEn:'Arrows for your bow', add:{arrows:20} },
+  { id:'potS',    kind:'consume', lv:5, name:'작은 물약', price:15, desc:'HP를 30 채워 줘요', nameEn:'Small Potion', descEn:'Restores 30 HP', add:{potS:1} },
+  { id:'sword_iron',    kind:'gear', lv:6, price:120, desc:'튼튼하고 날카로운 검', descEn:'A strong, sharp sword' },
+  { id:'armor_iron',    kind:'gear', lv:6, price:150, desc:'든든한 철 갑옷', descEn:'Sturdy iron armor' },
+  { id:'gun',           kind:'gear', lv:6, price:180, desc:'빠르게 쏘는 원거리 무기. 총알이 필요해요', descEn:'A fast ranged weapon. Needs bullets' },
+  { id:'bullets', kind:'consume', lv:6, name:'총알 20개', price:30, desc:'총에 넣는 총알이에요', nameEn:'20 Bullets', descEn:'Bullets for your gun', add:{bullets:20} },
+  { id:'potL',    kind:'consume', lv:6, name:'큰 물약', price:40, desc:'HP를 가득 채워 줘요', nameEn:'Big Potion', descEn:'Restores all HP', add:{potL:1} },
+  { id:'unicorn', kind:'pet',  lv:6, name:'유니콘', price:250, desc:'팀 최대 HP +20, HP가 저절로 계속 차올라요', nameEn:'Unicorn', descEn:'Team max HP +20, and HP keeps refilling' },
+  { id:'helmet',        kind:'gear', lv:7, price:150, desc:'머리를 지켜 줘요', descEn:'Protects your head' },
+  { id:'boots_bolt',    kind:'gear', lv:7, price:220, desc:'번개처럼 빨라지는 신발', descEn:'Shoes that make you fast as lightning' },
+  { id:'turtle',  kind:'pet',  lv:7, name:'거북이', price:300, desc:'팀 방어력 +3. 단단한 등껍질 친구', nameEn:'Turtle', descEn:'Team defense +3. A friend with a tough shell' },
+  { id:'sword_dia',     kind:'gear', lv:8, price:400, desc:'반짝이는 다이아몬드 검', descEn:'A sparkling diamond sword' },
+  { id:'armor_dia',     kind:'gear', lv:8, price:450, desc:'최강 갑옷. 최대 HP +20', descEn:'The strongest armor. Max HP +20' },
+  { id:'staff',         kind:'gear', lv:8, price:500, desc:'별빛 마법을 쏴요. 탄약이 필요 없어요', descEn:'Shoots starlight magic. No ammo needed' },
+  { id:'bow_legend',    kind:'gear', lv:9, price:600, desc:'한 번에 화살 3발! (화살은 1개만 써요)', descEn:'3 arrows per shot! (uses only 1 arrow)' },
+  { id:'phoenix', kind:'pet',  lv:9, name:'불사조', price:700, desc:'팀 공격력 +3. 쓰러지면 한 번 되살려 줘요 (90초마다)', nameEn:'Phoenix', descEn:'Team attack +3. Brings you back once when you fall (every 90 s)' },
+  { id:'trophy',  kind:'item', lv:10, name:'전설의 트로피', price:1000, desc:'진짜 탐험대만 가질 수 있는 트로피. 사면 게임 클리어!', nameEn:'Legendary Trophy', descEn:'Only true explorers can own it. Buying it clears the game!' },
+].map(c=>c.kind==='gear'?{ ...c, name:GEAR[c.id].name, nameEn:GEAR[c.id].nameEn }:c);
+const SEC_NAME_EN = ['', 'Tools', 'Pet Friends', 'Explorer Gear and New Maps', 'New Land and Baby Dragon', 'Battle Prep', 'Monster Hunting', 'Knight Gear', 'Diamond Gear', 'Legendary Power', 'The Final Treasure'];
+const SEC_NAME_KO = ['', '도구', '펫 친구', '탐험 장비와 새 지도', '새 나라와 아기 용', '전투 준비', '몬스터 사냥', '기사의 장비', '다이아 장비', '전설의 힘', '최후의 보물'];
+const LV_NAME_EN = ['', 'Rookie Miner', 'Pet Trainer', 'Expedition Leader', 'New Land Pioneer', 'Warrior in Training', 'Monster Hunter', 'Brave Knight', 'Diamond Hero', 'Legendary Hero', 'Legendary Explorers'];
+const LV_NAME_KO = ['', '초보 광부', '펫 조련사', '탐험 대장', '새 나라 개척자', '전사 훈련생', '몬스터 사냥꾼', '용감한 기사', '다이아 영웅', '전설의 용사', '전설의 탐험대'];
 /* ticket to reach level L+1 costs more than everything sold at level L put together */
 const TICKET_PRICE = 60;
 const SELL_RATE = 0.7;
+const SEC_NAME = new Proxy([],{ get:(_,k)=>(LANG==='en'?SEC_NAME_EN:SEC_NAME_KO)[k] });
+const LV_NAME = new Proxy([],{ get:(_,k)=>(LANG==='en'?LV_NAME_EN:LV_NAME_KO)[k] });
 function ticketPrice(){ return TICKET_PRICE; }
 
 const THEMES = {
-  meadow:{ name:'초원', ground:['#79c75a','#72bf53'], deco:'#5aa440', shore:['#efd89b','#ead292'], shoreDot:'#cfb170',
+  meadow:{ name:'초원', nameEn:'Meadow', ground:['#79c75a','#72bf53'], deco:'#5aa440', shore:['#efd89b','#ead292'], shoreDot:'#cfb170',
     rock:['#a99a84','#a29380'], peak:['#8c7f6d','#76695a'], cap:'#f4f7fb',
     water:['#6fd0ee','#6fd0ee','#4cb8e6','#3399d4','#2a7fc0','#226aa8'], outside:'#3d7a3a',
     chance:{grass:.27,sand:.32,mountain:.42}, dirt:['#7a4a24','#5b3418','#6cc24a'], gems:[1,2], rich:1, mon:1 },
-  snow:{ name:'얼음 나라', ground:['#eef5fb','#e5eef7'], deco:'#c3d6e8', shore:['#cde9f6','#c2e2f2'], shoreDot:'#a6cde3',
+  snow:{ name:'얼음 나라', nameEn:'Ice Land', ground:['#eef5fb','#e5eef7'], deco:'#c3d6e8', shore:['#cde9f6','#c2e2f2'], shoreDot:'#a6cde3',
     rock:['#a7b9cc','#9fb2c6'], peak:['#8197ae','#6c8299'], cap:'#ffffff',
     water:['#a9e4f5','#a9e4f5','#85d0ec','#62b5e0','#4a9bd0','#3a84bd'], outside:'#c7d8e8',
     chance:{grass:.33,sand:.38,mountain:.5}, dirt:['#7a5a44','#5b4030','#ffffff'], gems:[1,3], rich:1.5, mon:1.15 },
-  desert:{ name:'사막 나라', ground:['#f2d38f','#edcb83'], deco:'#d9b26a', shore:['#a8d672','#9dcd68'], shoreDot:'#7fb352',
+  desert:{ name:'사막 나라', nameEn:'Desert Land', ground:['#f2d38f','#edcb83'], deco:'#d9b26a', shore:['#a8d672','#9dcd68'], shoreDot:'#7fb352',
     rock:['#d68f5e','#cf8757'], peak:['#bd6d40','#9f5632'], cap:'#e8a676', mesa:true,
     water:['#5fd6d0','#5fd6d0','#3fbcc0','#2a9fae','#22889a','#1c7488'], outside:'#d9a85c',
     chance:{grass:.35,sand:.4,mountain:.55}, dirt:['#a0703c','#7a5028','#f2d38f'], gems:[2,4], rich:2, mon:1.3 },
-  candy:{ name:'사탕 나라', ground:['#ffd6ea','#ffcde4'], deco:'#ff9ac4', shore:['#fff3b0','#ffeea0'], shoreDot:'#ffcf3f',
+  candy:{ name:'사탕 나라', nameEn:'Candy Land', ground:['#ffd6ea','#ffcde4'], deco:'#ff9ac4', shore:['#fff3b0','#ffeea0'], shoreDot:'#ffcf3f',
     rock:['#d7bcff','#cfb2fb'], peak:['#b48af0','#9566dc'], cap:'#ffffff', candy:true,
     water:['#bdf3ff','#bdf3ff','#94e3f7','#6fd0ee','#56bde3','#3fa7d6'], outside:'#f4a9cd',
     chance:{grass:.4,sand:.45,mountain:.6}, dirt:['#8a4b2a','#5e3214','#ff9ac4'], gems:[3,6], rich:2.5, mon:1.45 },
 };
 /* monsters: mountain and water dwellers, Lv.6+ */
 const MON = {
-  goblin:{ name:'고블린',      terr:'mountain', kind:'melee',  hp:10, dmg:5, spd:2.2, aggro:4.5, minL:6, drop:3 },
-  archer:{ name:'해골 궁수',   terr:'mountain', kind:'ranged', hp:8,  dmg:4, spd:1.4, aggro:6,   range:5.5, cd:1.9, shot:'bone', minL:6, drop:4 },
-  golem: { name:'바위 골렘',   terr:'mountain', kind:'melee',  hp:30, dmg:9, spd:1.1, aggro:4,   minL:8, drop:10, big:1.25 },
-  slime: { name:'물방울 슬라임', terr:'water',  kind:'melee',  hp:9,  dmg:4, spd:1.8, aggro:4.5, minL:6, drop:3 },
-  spirit:{ name:'물의 정령',   terr:'water',    kind:'ranged', hp:8,  dmg:4, spd:1.5, aggro:6,   range:5.5, cd:2.1, shot:'water', minL:7, drop:5 },
-  squid: { name:'대왕 오징어', terr:'water',    kind:'ranged', hp:40, dmg:8, spd:1.0, aggro:7,   range:6.5, cd:1.6, shot:'ink', minL:9, drop:15, big:1.35 },
+  goblin:{ name:'고블린', nameEn:'Goblin',      terr:'mountain', kind:'melee',  hp:10, dmg:5, spd:2.2, aggro:4.5, minL:6, drop:3 },
+  archer:{ name:'해골 궁수', nameEn:'Skeleton Archer',   terr:'mountain', kind:'ranged', hp:8,  dmg:4, spd:1.4, aggro:6,   range:5.5, cd:1.9, shot:'bone', minL:6, drop:4 },
+  golem: { name:'바위 골렘', nameEn:'Rock Golem',   terr:'mountain', kind:'melee',  hp:30, dmg:9, spd:1.1, aggro:4,   minL:8, drop:10, big:1.25 },
+  slime: { name:'물방울 슬라임', nameEn:'Water Slime', terr:'water',  kind:'melee',  hp:9,  dmg:4, spd:1.8, aggro:4.5, minL:6, drop:3 },
+  spirit:{ name:'물의 정령', nameEn:'Water Spirit',   terr:'water',    kind:'ranged', hp:8,  dmg:4, spd:1.5, aggro:6,   range:5.5, cd:2.1, shot:'water', minL:7, drop:5 },
+  squid: { name:'대왕 오징어', nameEn:'Giant Squid', terr:'water',    kind:'ranged', hp:40, dmg:8, spd:1.0, aggro:7,   range:6.5, cd:1.6, shot:'ink', minL:9, drop:15, big:1.35 },
 };
+/* name and desc read the current language */
+function bilingual(o){
+  for(const key of ['name','desc']){
+    const en=o[key+'En']; if(en===undefined) continue;
+    const ko=o[key]; Object.defineProperty(o,key,{ get:()=>LANG==='en'?en:ko, enumerable:true, configurable:true });
+  }
+}
+[...TOOLS, ...Object.values(GEAR), FIST, ...CATALOG, ...Object.values(THEMES), ...Object.values(MON)].forEach(bilingual);
 const PAL = [
   { boy:['#2f7de1','#2260b8'], girl:['#ff6fa8','#e04f8a'] },
   { boy:['#3fb35a','#2b8a42'], girl:['#a072ea','#7d52c6'] },
@@ -1283,14 +1309,15 @@ function makeProblem(){
 function openQuiz(p,n,onOK,what){
   dropHeld(); G.players.forEach(q=>q.dirStack=[]);
   quiz={ p, n, onOK, prob:makeProblem(), busy:false };
-  $('qTitle').textContent=`${G.mode===2?(p.idx+1)+'P · ':''}${what} ${n}개를 주우려면 문제를 풀어요!`;
+  $('qTitle').textContent=(G.mode===2?(p.idx+1)+'P · ':'')+tr(`${what} ${n}개를 주우려면 문제를 풀어요!`,`Solve this to pick up ${n} ${n===1?what.replace(/s$/,''):what}!`);
   showProblem(); $('quiz').hidden=false;
   const inp=$('qIn'); inp.readOnly=isTouch; setTimeout(()=>inp.focus(),30);
 }
 function showProblem(){
   $('qText').textContent=quiz.prob.text; $('qIn').value=''; $('qMsg').textContent=''; $('qMsg').className='q-msg';
   const s=G.team.streak%5;
-  $('qStreak').innerHTML=`연속 정답 <span>${[0,1,2,3,4].map(k=>`<i class="${k<s?'on':''}"></i>`).join('')}</span> 5번 연속이면 보너스!`;
+  const dots=`<span>${[0,1,2,3,4].map(k=>`<i class="${k<s?'on':''}"></i>`).join('')}</span>`;
+  $('qStreak').innerHTML=tr(`연속 정답 ${dots} 5번 연속이면 보너스!`,`Streak ${dots} 5 in a row earns a bonus!`);
 }
 function submitQuiz(){
   if(!quiz || quiz.busy) return;
@@ -1298,18 +1325,18 @@ function submitQuiz(){
   const tm=G.team;
   if(+v===quiz.prob.ans){
     quiz.busy=true; tm.solved++; tm.streak++;
-    sfx.right(); $('qMsg').textContent='정답이에요! 최고!'; $('qMsg').className='q-msg good';
+    sfx.right(); $('qMsg').textContent=tr('정답이에요! 최고!','Correct! Awesome!'); $('qMsg').className='q-msg good';
     const bonus = tm.streak%5===0 ? Math.max(3,Math.round(3*world.th.rich)) : 0;
     const q=quiz;
     setTimeout(()=>{
       closeQuiz(); q.onOK();
-      if(bonus){ giveGems(bonus,q.p.x,q.p.y-0.6,`보너스 +${bonus}`); toast(q.p,`5문제 연속 정답! 보너스 다이아몬드 ${bonus}개!`,'good'); }
+      if(bonus){ giveGems(bonus,q.p.x,q.p.y-0.6,tr(`보너스 +${bonus}`,`Bonus +${bonus}`)); toast(q.p,tr(`5문제 연속 정답! 보너스 다이아몬드 ${bonus}개!`,`5 in a row! ${bonus} bonus diamonds!`),'good'); }
       save();
     },550);
   } else {
     quiz.busy=true; tm.streak=0;
     sfx.wrong(); const card=$('qCard'); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-    $('qMsg').textContent=`아쉬워요! ${quiz.prob.text} = ${quiz.prob.ans} 이에요. 새 문제!`; $('qMsg').className='q-msg bad';
+    $('qMsg').textContent=tr(`아쉬워요! ${quiz.prob.text} = ${quiz.prob.ans} 이에요. 새 문제!`,`Not quite! ${quiz.prob.text} = ${quiz.prob.ans}. Here is a new one!`); $('qMsg').className='q-msg bad';
     setTimeout(()=>{ if(!quiz) return; quiz.prob=makeProblem(); quiz.busy=false; showProblem(); $('qIn').focus(); },1600);
   }
 }
@@ -1323,7 +1350,7 @@ function revealTile(x,y,dirt){
   burst(x*T+T/2,y*T+T*0.6,dirt,10,200,T/12);
   if(t.d>0){
     burst(x*T+T/2,y*T+T*0.5,['#9cf4ff','#ffffff','#2fc8ec'],12,220,T/14,200);
-    floatText(x*T+T/2,y*T,'다이아몬드!','#9cf4ff');
+    floatText(x*T+T/2,y*T,tr('다이아몬드!','Diamond!'),'#9cf4ff');
   }
   return t.d;
 }
@@ -1331,8 +1358,8 @@ function act1(p){ if(p.mode==='fight') attack(p); else dig(p); }
 function dig(p){
   if(screen!=='game' || modalOpen() || !p || p.moving || p.dead>0) return;
   const t=tileAt(p.tx,p.ty);
-  if(t.type==='water'){ toast(p,'물속은 팔 수 없어요. 반짝이는 보물상자를 찾아봐요!'); return; }
-  if(t.dug){ toast(p,t.d>0?`다이아몬드가 있어요! ${grabKeyName(p)}로 주워요`:'이미 판 곳이에요. 다른 곳을 파 봐요!'); return; }
+  if(t.type==='water'){ toast(p,tr('물속은 팔 수 없어요. 반짝이는 보물상자를 찾아봐요!',"You can't dig underwater. Look for the shiny treasure chest!")); return; }
+  if(t.dug){ toast(p,t.d>0?tr(`다이아몬드가 있어요! ${grabKeyName(p)}로 주워요`,`There's a diamond! Press ${grabKeyName(p)} to pick it up`):tr('이미 판 곳이에요. 다른 곳을 파 봐요!','Already dug here. Try another spot!')); return; }
   const tool=curTool();
   p.swing=1; t.hits++; t.need=tool.hits;
   sfx.dig();
@@ -1349,11 +1376,11 @@ function dig(p){
     }
     if(found>0){
       sfx.found();
-      toast(p, holes>1 ? `드릴로 ${holes}칸을 팠어요! 다이아몬드 ${found}개 발견!` : `다이아몬드 ${found}개 발견! ${grabKeyName(p)}로 주워요`,'good');
+      toast(p, holes>1 ? tr(`드릴로 ${holes}칸을 팠어요! 다이아몬드 ${found}개 발견!`,`The drill dug ${holes} tiles! Found ${found} diamonds!`) : tr(`다이아몬드 ${found}개 발견! ${grabKeyName(p)}로 주워요`,`Found ${found} diamonds! Press ${grabKeyName(p)} to pick up`),'good');
     } else {
       sfx.empty();
-      floatText(p.tx*T+T/2,p.ty*T,'꽝!','#ffe0a0');
-      toast(p,['아무것도 없네요. 다른 곳을 파 봐요!','여긴 흙뿐이에요. 옆을 파 볼까요?','아쉬워요! 산에는 다이아몬드가 더 많대요.'][G.team.holes%3]);
+      floatText(p.tx*T+T/2,p.ty*T,tr('꽝!','Nothing!'),'#ffe0a0');
+      toast(p,tr(['아무것도 없네요. 다른 곳을 파 봐요!','여긴 흙뿐이에요. 옆을 파 볼까요?','아쉬워요! 산에는 다이아몬드가 더 많대요.'],['Nothing here. Try another spot!','Just dirt. Try the tile next to it?','Too bad! Mountains hide more diamonds.'])[G.team.holes%3]);
     }
     save();
   }
@@ -1370,52 +1397,52 @@ function grab(p){
     openQuiz(p,n,()=>{
       ch.opened=true; sfx.chest();
       burst(p.tx*T+T/2,p.ty*T+T/2,['#ffcf3f','#9cf4ff','#ffffff','#ff6fa8'],40,280,T/12,250);
-      giveGems(n,p.tx,p.ty,'+'+n); toast(p,`보물상자를 열었어요! 다이아몬드 ${n}개!`,'good');
-    },'보물상자 다이아몬드');
+      giveGems(n,p.tx,p.ty,'+'+n); toast(p,tr(`보물상자를 열었어요! 다이아몬드 ${n}개!`,`Opened the treasure chest! ${n} diamonds!`),'good');
+    },tr('보물상자 다이아몬드','treasure diamonds'));
     return;
   }
   if(dp){
     const n=dp.n*gemMult();
-    openQuiz(p,n,()=>{ world.drops=world.drops.filter(x=>x!==dp); sfx.grab(); giveGems(n,p.tx,p.ty); },'몬스터가 떨어뜨린 다이아몬드');
+    openQuiz(p,n,()=>{ world.drops=world.drops.filter(x=>x!==dp); sfx.grab(); giveGems(n,p.tx,p.ty); },tr('몬스터가 떨어뜨린 다이아몬드','monster diamonds'));
     return;
   }
   if(t.dug && t.d>0){
     const n=t.d*gemMult();
-    openQuiz(p,n,()=>{ t.d=0; sfx.grab(); giveGems(n,p.tx,p.ty); },'다이아몬드');
+    openQuiz(p,n,()=>{ t.d=0; sfx.grab(); giveGems(n,p.tx,p.ty); },tr('다이아몬드','diamonds'));
     return;
   }
-  toast(p, ch ? '이 보물상자는 이미 열었어요' : t.type==='water'?'여기엔 주울 게 없어요. 보물상자 위에서 눌러요!':'주울 다이아몬드가 없어요. 먼저 땅을 파 봐요!');
+  toast(p, ch ? tr('이 보물상자는 이미 열었어요','This chest is already open') : t.type==='water'?tr('여기엔 주울 게 없어요. 보물상자 위에서 눌러요!','Nothing to pick up here. Try it on top of a chest!'):tr('주울 다이아몬드가 없어요. 먼저 땅을 파 봐요!','No diamonds here. Dig first!'));
 }
 function swapMode(p){
   if(screen!=='game' || modalOpen() || !p || p.dead>0) return;
   p.mode = p.mode==='dig' ? 'fight' : 'dig';
   const w=weaponOf(p);
-  floatText(p.x*T+T/2,p.y*T-T*0.2, p.mode==='fight' ? `싸우기: ${w.name}` : `파기: ${curTool().name}`, p.mode==='fight'?'#ff9a9a':'#ffd28a',0.38);
-  if(p.mode==='fight' && !p.equip.weapon) toast(p,'무기가 없어서 주먹으로 싸워요. 가방(I)에서 무기를 장착해요!');
+  floatText(p.x*T+T/2,p.y*T-T*0.2, p.mode==='fight' ? tr(`싸우기: ${w.name}`,`Fight: ${w.name}`) : tr(`파기: ${curTool().name}`,`Dig: ${curTool().name}`), p.mode==='fight'?'#ff9a9a':'#ffd28a',0.38);
+  if(p.mode==='fight' && !p.equip.weapon) toast(p,tr('무기가 없어서 주먹으로 싸워요. 가방(I)에서 무기를 장착해요!','No weapon, so you fight with your fists. Equip one from the bag (I)!'));
   sfx.tick(); updateHUD();
 }
 function drinkPotion(p){
   if(screen!=='game' || modalOpen() || !p || p.dead>0) return;
   const tm=G.team, s=stats(p);
-  if(p.hp>=s.maxHp){ toast(p,'HP가 가득 차 있어요!'); return; }
+  if(p.hp>=s.maxHp){ toast(p,tr('HP가 가득 차 있어요!','HP is already full!')); return; }
   const missing=s.maxHp-p.hp;
   let use = (tm.potS>0 && (missing<=40 || tm.potL===0)) ? 'potS' : tm.potL>0 ? 'potL' : null;
-  if(!use){ toast(p,'물약이 없어요. 상점에서 사요!','bad'); return; }
+  if(!use){ toast(p,tr('물약이 없어요. 상점에서 사요!','No potions. Buy some at the shop!'),'bad'); return; }
   tm[use]--; p.hp = use==='potS' ? Math.min(s.maxHp,p.hp+30) : s.maxHp;
   sfx.potion(); burst(p.x*T+T/2,p.y*T+T/2,['#ff8aa0','#ffffff','#ffcf3f'],18,160,T/14,-60);
-  floatText(p.x*T+T/2,p.y*T,use==='potS'?'+30 HP':'HP 가득!','#ff8aa0');
+  floatText(p.x*T+T/2,p.y*T,use==='potS'?'+30 HP':tr('HP 가득!','Full HP!'),'#ff8aa0');
   updateHUD(); save();
 }
 function enterTile(p){
   const t=tileAt(p.tx,p.ty), prev=tileAt(p.fx,p.fy);
   if(t.type==='water' && prev.type!=='water'){
     sfx.splash(); burst(p.tx*T+T/2,p.ty*T+T/2,['#bfeaf7','#ffffff','#6fd0ee'],14,160,T/14);
-    if(!G.flags.water){ G.flags.water=1; toast(p,'풍덩! 호수마다 보물상자가 하나씩 숨어 있어요'); }
+    if(!G.flags.water){ G.flags.water=1; toast(p,tr('풍덩! 호수마다 보물상자가 하나씩 숨어 있어요','Splash! Each lake hides one treasure chest')); }
   }
-  if(t.type==='mountain' && !G.flags.mt){ G.flags.mt=1; toast(p,'산에는 다이아몬드가 더 많이 숨어 있대요!'); }
+  if(t.type==='mountain' && !G.flags.mt){ G.flags.mt=1; toast(p,tr('산에는 다이아몬드가 더 많이 숨어 있대요!','Mountains hide more diamonds!')); }
   const ch=chestAt(p.tx,p.ty);
-  if(ch && !ch.opened) toast(p,`보물상자다! ${grabKeyName(p)}를 눌러 열어요`,'good');
-  else if(dropAt(p.tx,p.ty)) toast(p,`몬스터가 떨어뜨린 다이아몬드! ${grabKeyName(p)}로 주워요`,'good');
+  if(ch && !ch.opened) toast(p,tr(`보물상자다! ${grabKeyName(p)}를 눌러 열어요`,`A treasure chest! Press ${grabKeyName(p)} to open it`),'good');
+  else if(dropAt(p.tx,p.ty)) toast(p,tr(`몬스터가 떨어뜨린 다이아몬드! ${grabKeyName(p)}로 주워요`,`Monster diamonds! Press ${grabKeyName(p)} to pick them up`),'good');
 }
 function maxSpan(){ return { x:CW/ZMIN/T-3, y:CH/ZMIN/T-3 }; }
 const ZMIN = 0.45;
@@ -1427,7 +1454,7 @@ function tryMove(p,d){
   if(G.mode===2){
     const o=G.players[1-p.idx], m=maxSpan();
     if(o.dead<=0 && (Math.abs(nx-o.tx)>m.x || Math.abs(ny-o.ty)>m.y)){
-      if(time>farTimer){ farTimer=time+2.5; toast(p,'친구와 너무 멀어요! 같이 다녀요'); }
+      if(time>farTimer){ farTimer=time+2.5; toast(p,tr('친구와 너무 멀어요! 같이 다녀요','Too far from your friend! Stay together')); }
       return;
     }
   }
@@ -1442,8 +1469,8 @@ function attack(p){
   if(screen!=='game' || modalOpen() || !p || p.dead>0 || p.atkCd>0) return;
   const w=weaponOf(p), s=stats(p), tm=G.team;
   const [fx,fy]=FACE[p.dir];
-  if(w.atk==='arrow' && tm.arrows<=0){ toast(p,'화살이 없어요! 상점에서 사요','bad'); p.atkCd=0.4; return; }
-  if(w.atk==='bullet' && tm.bullets<=0){ toast(p,'총알이 없어요! 상점에서 사요','bad'); p.atkCd=0.4; return; }
+  if(w.atk==='arrow' && tm.arrows<=0){ toast(p,tr('화살이 없어요! 상점에서 사요','Out of arrows! Buy more at the shop'),'bad'); p.atkCd=0.4; return; }
+  if(w.atk==='bullet' && tm.bullets<=0){ toast(p,tr('총알이 없어요! 상점에서 사요','Out of bullets! Buy more at the shop'),'bad'); p.atkCd=0.4; return; }
   p.atkCd=w.cd; p.swing=1;
   const roll=()=>{ const crit=Math.random()<0.12; return { dmg:(w.dmg+s.atk)*(crit?2:1), crit }; };
   if(w.atk==='melee'){
@@ -1472,7 +1499,7 @@ function attack(p){
 function damageMonster(m,dmg,crit,kx=0,ky=0){
   if(!m.alive) return;
   m.hp-=dmg; m.hitT=0.18; sfx.hit();
-  floatText(m.x*T+T/2,m.y*T-T*0.1,crit?`${dmg} 치명타!`:`${dmg}`,crit?'#ffd84a':'#ffffff',crit?0.55:0.42);
+  floatText(m.x*T+T/2,m.y*T-T*0.1,crit?tr(`${dmg} 치명타!`,`${dmg} Critical!`):`${dmg}`,crit?'#ffd84a':'#ffffff',crit?0.55:0.42);
   const nx=m.x+kx*0.25, ny=m.y+ky*0.25, t=tileAt(Math.round(nx),Math.round(ny));
   if(t && t.type===MON[m.type].terr){ m.x=nx; m.y=ny; }
   if(m.hp<=0) killMonster(m);
@@ -1484,7 +1511,7 @@ function killMonster(m){
   const n=Math.max(1,Math.round((d.drop+(G.level-6))*world.th.rich));
   const x=Math.round(m.x), y=Math.round(m.y);
   const ex=dropAt(x,y); if(ex) ex.n+=n; else world.drops.push({x,y,n});
-  floatText(x*T+T/2,y*T-T*0.4,`${d.name} 물리침!`,'#ffd84a',0.4);
+  floatText(x*T+T/2,y*T-T*0.4,tr(`${d.name} 물리침!`,`${d.name} defeated!`),'#ffd84a',0.4);
 }
 function hurtPlayer(p,dmg){
   if(p.inv>0 || p.dead>0 || modalOpen()) return;
@@ -1500,11 +1527,11 @@ function knockOut(p){
   if(has('phoenix') && time>p.phoenixT){
     p.phoenixT=time+90; p.hp=Math.round(s.maxHp*0.5); p.inv=2;
     sfx.level(); burst(p.x*T+T/2,p.y*T+T/2,['#ff6b2c','#ffcf3f','#ff3d3d','#ffffff'],50,320,T/10,100);
-    toast(p,'불사조가 다시 일으켜 줬어요!','good'); return;
+    toast(p,tr('불사조가 다시 일으켜 줬어요!','The phoenix brought you back!'),'good'); return;
   }
   p.hp=0; p.dead=2.5; p.moving=false; p.dirStack=[];
   const lose=Math.floor(G.team.diamonds*0.1); G.team.diamonds-=lose;
-  sfx.down(); toast(p,lose?`기절했어요! 다이아몬드 ${lose}개를 잃어버렸어요`:'기절했어요! 처음 자리에서 다시 시작해요','bad');
+  sfx.down(); toast(p,lose?tr(`기절했어요! 다이아몬드 ${lose}개를 잃어버렸어요`,`Knocked out! You lost ${lose} diamonds`):tr('기절했어요! 처음 자리에서 다시 시작해요','Knocked out! Starting again from the start'),'bad');
   updateHUD();
 }
 function revive(p){
@@ -1619,18 +1646,18 @@ function updatePets(dt){
     if(pe.type==='dog'){
       const m=nearestMonster(o.x,o.y,4);
       if(m){ tx=m.x; ty=m.y; sp=6.5;
-        if(Math.hypot(m.x-pe.x,m.y-pe.y)<0.8 && pe.cool<=0){ damageMonster(m,3+Math.floor(G.level/2),false); pe.cool=1; pe.say=0.6; pe.sayText='왈!'; sfx.bark(); } }
+        if(Math.hypot(m.x-pe.x,m.y-pe.y)<0.8 && pe.cool<=0){ damageMonster(m,3+Math.floor(G.level/2),false); pe.cool=1; pe.say=0.6; pe.sayText=tr('왈!','Woof!'); sfx.bark(); } }
     }
     if(FLY.includes(pe.type) && pe.fireCd<=0){
       const m=nearestMonster(pe.x,pe.y,5);
       if(m){ const a=Math.atan2(m.y-pe.y,m.x-pe.x);
         shots.push({ x:pe.x, y:pe.y-0.5, vx:Math.cos(a)*8, vy:Math.sin(a)*8, life:0.8, dmg:pe.type==='dragon'?5:4, from:'p', kind:'pfire' });
-        pe.fireCd=pe.type==='dragon'?1.6:2; pe.say=0.5; pe.sayText=pe.type==='dragon'?'화르륵!':'파앗!'; sfx.roar(); }
+        pe.fireCd=pe.type==='dragon'?1.6:2; pe.say=0.5; pe.sayText=pe.type==='dragon'?tr('화르륵!','Fwoosh!'):tr('파앗!','Flash!'); sfx.roar(); }
     }
     if(pe.type==='dragon' && tx===undefined){
       if(!pe.task && pe.cool<=0){
         const best=nearestDiamond(o.x,o.y,8,false);
-        if(best){ pe.task=best; pe.say=1; pe.sayText='크앙!'; }
+        if(best){ pe.task=best; pe.say=1; pe.sayText=tr('크앙!','Rawr!'); }
         pe.cool=1;
       }
       if(pe.task){
@@ -1639,7 +1666,7 @@ function updatePets(dt){
         else { tx=pe.task.x; ty=pe.task.y; sp=7;
           if(Math.hypot(tx-pe.x,ty-pe.y)<0.12){
             revealTile(tx,ty,world.th.dirt); sfx.found();
-            toast(o,`아기 용이 다이아몬드 ${t.d}개를 찾았어요! 주우러 가요`,'good');
+            toast(o,tr(`아기 용이 다이아몬드 ${t.d}개를 찾았어요! 주우러 가요`,`The baby dragon found ${t.d} diamonds! Go pick them up`),'good');
             pe.task=null; pe.cool=7; save();
           } }
       }
@@ -1663,8 +1690,8 @@ function updateRadar(p,dt){
 /* ---------- HUD ---------- */
 const gemSvg='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#2fc8ec"/><path d="M6 3h12l4 6H2z" fill="#9cf4ff"/><path d="M2 9h6l4 12z" fill="#1e9fd0"/><path d="M16 9h6L12 21z" fill="#55dcf7"/><path d="M7 4.5h2.5L8 7.5z" fill="#fff"/></svg>';
 function buildHUD(){
-  $('pbar').innerHTML = `<div class="row"><span class="tag">팀</span>
-    <div class="chip gem" id="gem0" title="팀 다이아몬드">${gemSvg}<b id="cnt0">0</b></div>
+  $('pbar').innerHTML = `<div class="row"><span class="tag">${tr('팀','Team')}</span>
+    <div class="chip gem" id="gem0" title="${tr('팀 다이아몬드','Team diamonds')}">${gemSvg}<b id="cnt0">0</b></div>
     <div class="chip lv"><b id="lv0">Lv.1</b><span id="lvn0"></span></div>
     <div class="chip belt" id="belt"></div></div>
     <div class="row" id="pcards">${G.players.map(p=>`<div class="pcard"><span class="who" style="background:${PCOL[p.idx]}">${p.idx+1}P</span>
@@ -1686,8 +1713,8 @@ function updateHUD(){
     const s=stats(p), fight=p.mode==='fight', w=weaponOf(p);
     drawItemIcon($('hand'+p.idx), fight ? (p.equip.weapon?p.equip.weapon.id:'hand') : tool.id);
     const sw = G.mode===1 ? 'Q' : p.idx===0 ? 'Q' : 'O';
-    $('hn'+p.idx).innerHTML = fight ? `<span class="mode-fight">싸우기</span> ${w.name}${has('drill')&&!fight?'':''} <small>${sw} 바꾸기</small>`
-      : `<span class="mode-dig">파기</span> ${tool.name}${has('drill')?'+드릴':''} <small>${sw} 바꾸기</small>`;
+    $('hn'+p.idx).innerHTML = fight ? `<span class="mode-fight">${tr('싸우기','Fight')}</span> ${w.name} <small>${sw} ${tr('바꾸기','swap')}</small>`
+      : `<span class="mode-dig">${tr('파기','Dig')}</span> ${tool.name}${has('drill')?tr('+드릴','+drill'):''} <small>${sw} ${tr('바꾸기','swap')}</small>`;
     const f=Math.max(0,p.hp/s.maxHp);
     $('hpb'+p.idx).style.width=(f*100)+'%';
     $('hpt'+p.idx).textContent=`${Math.ceil(Math.max(0,p.hp))} / ${s.maxHp}`;
@@ -1696,13 +1723,16 @@ function updateHUD(){
     || (L<MAX_LV && tm.diamonds>=ticketPrice(L));
   $('shopBtn').classList.toggle('ready',can);
 }
-function keyHelp(i){
-  if(G.mode===1) return `<span><kbd>←↑↓→</kbd> 이동</span><span><kbd>Space</kbd> 파기·공격</span><span><kbd>Shift</kbd> 줍기</span><span><kbd>Q</kbd> 바꾸기</span><span><kbd>R</kbd> 물약</span><span><kbd>I</kbd> 가방</span><span><kbd>B</kbd> 상점</span>`;
-  return i===0
-    ? `<b>1P</b><span><kbd>WASD</kbd> 이동</span><span><kbd>Space</kbd> 파기·공격</span><span><kbd>왼Shift</kbd> 줍기</span><span><kbd>Q</kbd> 바꾸기</span><span><kbd>R</kbd> 물약</span><span><kbd>E</kbd> 상점</span>`
-    : `<b>2P</b><span><kbd>←↑↓→</kbd> 이동</span><span><kbd>Enter</kbd> 파기·공격</span><span><kbd>P</kbd> 줍기</span><span><kbd>O</kbd> 바꾸기</span><span><kbd>K</kbd> 물약</span><span><kbd>L</kbd> 상점</span>`;
+function keyRow(kind){
+  const w={ move:tr('이동','Move'), act:tr('파기·공격','Dig/Attack'), grab:tr('줍기','Grab'), swap:tr('바꾸기','Swap'), pot:tr('물약','Potion'), bag:tr('가방','Bag'), shop:tr('상점','Shop') };
+  const k=(key,t)=>`<span><kbd>${key}</kbd> ${t}</span>`;
+  if(kind==='solo') return k('←↑↓→',w.move)+k('Space',w.act)+k('Shift',w.grab)+k('Q',w.swap)+k('R',w.pot)+k('I',w.bag)+k('B',w.shop);
+  if(kind==='p1') return `<b>1P</b>`+k('WASD',w.move)+k('Space',w.act)+k(tr('왼쪽 Shift','Left Shift'),w.grab)+k('Q',w.swap)+k('R',w.pot)+k('E',w.shop);
+  if(kind==='p2') return `<b>2P</b>`+k('←↑↓→',w.move)+k('Enter',w.act)+k('P',w.grab)+k('O',w.swap)+k('K',w.pot)+k('L',w.shop);
+  return `<b>${tr('같이','Both')}</b>`+k('I',w.bag);
 }
-const grabKeyName=p=> isTouch&&G.mode===1 ? '줍기 버튼' : G.mode===1 ? 'Shift' : p&&p.idx===1 ? 'P' : '왼쪽 Shift';
+function keyHelp(i){ return G.mode===1 ? keyRow('solo') : keyRow(i?'p2':'p1'); }
+const grabKeyName=p=> isTouch&&G.mode===1 ? tr('줍기 버튼','the Grab button') : G.mode===1 ? 'Shift' : p&&p.idx===1 ? 'P' : tr('왼쪽 Shift','Left Shift');
 
 /* ---------- bag (Diablo-style grid) ---------- */
 function bagCells(){ const occ=Array.from({length:BAG_H},()=>Array(BAG_W).fill(null)); for(const it of G.team.bag){ const g=GEAR[it.id]; for(let y=0;y<g.h;y++) for(let x=0;x<g.w;x++) if(occ[it.y+y]) occ[it.y+y][it.x+x]=it; } return occ; }
@@ -1731,8 +1761,8 @@ function renderInv(){
   const ts=$('toolSlot'); ts.querySelectorAll('canvas').forEach(c=>c.remove());
   const tc=document.createElement('canvas'); tc.width=96; tc.height=96; drawItemIcon(tc,curTool().id); tc.style.width='70%'; ts.prepend(tc);
   const s=stats(p), w=weaponOf(p);
-  $('pstats').innerHTML=`<span>공격력</span><b>${w.dmg+s.atk}${w.atk!=='melee'?' (원거리)':''}</b><span>방어력</span><b>${s.def}</b>
-    <span>이동 속도</span><b>${Math.round(s.spd*100)}%</b><span>HP</span><b>${Math.ceil(p.hp)} / ${s.maxHp}</b>`;
+  $('pstats').innerHTML=`<span>${tr('공격력','Attack')}</span><b>${w.dmg+s.atk}${w.atk!=='melee'?tr(' (원거리)',' (ranged)'):''}</b><span>${tr('방어력','Defense')}</span><b>${s.def}</b>
+    <span>${tr('이동 속도','Speed')}</span><b>${Math.round(s.spd*100)}%</b><span>HP</span><b>${Math.ceil(p.hp)} / ${s.maxHp}</b>`;
   $('beltbox').innerHTML=['potS','potL','arrows','bullets'].map(id=>`<div class="belt-i"><canvas width="48" height="48" data-id="${id}"></canvas><span>${G.team[id]}</span></div>`).join('');
   $('beltbox').querySelectorAll('canvas').forEach(c=>drawItemIcon(c,c.dataset.id));
   const gh=$('ghost'); gh.hidden=!held; gh.innerHTML='';
@@ -1764,14 +1794,14 @@ function quickEquip(e){
   const {x,y}=bagCellFromEvent(e), it=bagItemAt(x,y); if(!it) return;
   const p=G.players[invIdx], slot=GEAR[it.id].slot, prev=p.equip[slot];
   G.team.bag=G.team.bag.filter(o=>o!==it); p.equip[slot]=it;
-  if(prev){ const ov=overlaps(prev.id,it.x,it.y); if(ov && !ov.length){ prev.x=it.x; prev.y=it.y; G.team.bag.push(prev); } else { const pos=firstFit(prev.id); if(pos){ Object.assign(prev,pos); G.team.bag.push(prev); } else { p.equip[slot]=prev; it.x=x; G.team.bag.push(it); toast(p,'가방에 자리가 없어요','bad'); } } }
+  if(prev){ const ov=overlaps(prev.id,it.x,it.y); if(ov && !ov.length){ prev.x=it.x; prev.y=it.y; G.team.bag.push(prev); } else { const pos=firstFit(prev.id); if(pos){ Object.assign(prev,pos); G.team.bag.push(prev); } else { p.equip[slot]=prev; it.x=x; G.team.bag.push(it); toast(p,tr('가방에 자리가 없어요','No room in the bag'),'bad'); } } }
   if(slot==='weapon' && p.mode==='dig') p.mode='fight';
   sfx.buy(); clampHp(p); renderInv(); updateHUD(); save();
 }
 function onSlotDown(e){
   const sl=e.currentTarget, slot=sl.dataset.slot, p=G.players[invIdx];
   if(held){
-    if(GEAR[held.it.id].slot!==slot){ sfx.no(); toast(p,`${GEAR[held.it.id].name}은(는) ${({head:'머리',weapon:'무기',armor:'갑옷',feet:'신발'})[GEAR[held.it.id].slot]} 칸에 넣어요`,'bad'); return; }
+    if(GEAR[held.it.id].slot!==slot){ sfx.no(); toast(p,tr(`${GEAR[held.it.id].name}은(는) ${({head:'머리',weapon:'무기',armor:'갑옷',feet:'신발'})[GEAR[held.it.id].slot]} 칸에 넣어요`,`${GEAR[held.it.id].name} goes in the ${({head:'Head',weapon:'Weapon',armor:'Armor',feet:'Feet'})[GEAR[held.it.id].slot]} slot`),'bad'); return; }
     const prev=p.equip[slot]; p.equip[slot]=held.it;
     held = prev ? { it:prev, from:{type:'slot',slot} } : null;
     if(slot==='weapon' && p.mode==='dig') p.mode='fight';
@@ -1784,7 +1814,7 @@ function onSlotDown(e){
 function onSellDown(e){
   if(!held) return;
   const n=sellPrice(held.it.id); G.team.diamonds+=n; sfx.buy();
-  toast(null,`${GEAR[held.it.id].name}을(를) 팔아서 다이아몬드 ${n}개를 받았어요`,'good');
+  toast(null,tr(`${GEAR[held.it.id].name}을(를) 팔아서 다이아몬드 ${n}개를 받았어요`,`Sold ${GEAR[held.it.id].name} for ${n} diamonds`),'good');
   held=null; renderInv(); updateHUD(); save();
 }
 function dropHeld(){
@@ -1803,17 +1833,17 @@ function showTip(e){
   const sl=e.target.closest && e.target.closest('.slot[data-slot]'); if(sl) it=G.players[invIdx].equip[sl.dataset.slot];
   if(!it || held){ tip.hidden=true; return; }
   const g=GEAR[it.id], [rn,rc]=RAR[g.r];
-  tip.innerHTML=`<b style="color:${rc}">${g.name}</b>${rn} · ${gearStats(it.id)}<br><span style="color:#8a96c8">${sl?'클릭해서 빼기':'오른쪽 클릭: 바로 장착 · 팔면 '+sellPrice(it.id)+'개'}</span>`;
+  tip.innerHTML=`<b style="color:${rc}">${g.name}</b>${rn} · ${gearStats(it.id)}<br><span style="color:#8a96c8">${sl?tr('클릭해서 빼기','Click to take it off'):tr('오른쪽 클릭: 바로 장착 · 팔면 '+sellPrice(it.id)+'개','Right-click: equip · sells for '+sellPrice(it.id))}</span>`;
   tip.hidden=false; tip.style.left=Math.min(innerWidth-270,e.clientX+16)+'px'; tip.style.top=(e.clientY+16)+'px';
 }
 function gearStats(id){
   const g=GEAR[id], out=[];
-  if(g.slot==='weapon') out.push(`공격력 ${g.dmg}`, g.atk==='melee'?'근거리':g.atk==='arrow'?'원거리 · 화살 필요':g.atk==='bullet'?'원거리 · 총알 필요':'원거리 · 탄약 필요 없음');
-  if(g.multi) out.push(`한 번에 ${g.multi}발`);
-  if(g.def) out.push(`방어력 +${g.def}`);
-  if(g.spd) out.push(`이동 속도 +${Math.round(g.spd*100)}%`);
-  if(g.hp) out.push(`최대 HP +${g.hp}`);
-  if(g.gem2) out.push('주운 다이아몬드 2배');
+  if(g.slot==='weapon') out.push(tr(`공격력 ${g.dmg}`,`Attack ${g.dmg}`), g.atk==='melee'?tr('근거리','Melee'):g.atk==='arrow'?tr('원거리 · 화살 필요','Ranged · needs arrows'):g.atk==='bullet'?tr('원거리 · 총알 필요','Ranged · needs bullets'):tr('원거리 · 탄약 필요 없음','Ranged · no ammo needed'));
+  if(g.multi) out.push(tr(`한 번에 ${g.multi}발`,`${g.multi} shots at once`));
+  if(g.def) out.push(tr(`방어력 +${g.def}`,`Defense +${g.def}`));
+  if(g.spd) out.push(tr(`이동 속도 +${Math.round(g.spd*100)}%`,`Speed +${Math.round(g.spd*100)}%`));
+  if(g.hp) out.push(tr(`최대 HP +${g.hp}`,`Max HP +${g.hp}`));
+  if(g.gem2) out.push(tr('주운 다이아몬드 2배','Double diamonds when you pick up'));
   return out.join(' · ');
 }
 function openInv(i=0){ if(screen!=='game' || !$('modal').hidden || !$('quiz').hidden) return; $('shop').hidden=true; G.players.forEach(p=>p.dirStack=[]); invIdx=Math.min(i,G.players.length-1); renderInv(); $('inv').hidden=false; }
@@ -1826,20 +1856,20 @@ function shopRow(it,locked){
   const cv=document.createElement('canvas'); cv.width=96; cv.height=96; drawItemIcon(cv,it.kind==='ticket'?'ticket':it.id,it.toLv);
   const b=document.createElement('button'); b.className='buy';
   let action=false, extra='';
-  if(locked){ b.className='buy no'; b.textContent='잠겨 있어요'; }
+  if(locked){ b.className='buy no'; b.textContent=tr('잠겨 있어요','Locked'); }
   else if(it.kind==='map' && owned){
-    if(G.mapId===it.id){ b.className='buy owned'; b.textContent='지금 여기'; }
-    else { b.className='buy go'; b.textContent='여행 가기'; action=true; }
+    if(G.mapId===it.id){ b.className='buy owned'; b.textContent=tr('지금 여기','You are here'); }
+    else { b.className='buy go'; b.textContent=tr('여행 가기','Travel'); action=true; }
   }
-  else if(owned){ b.className='buy owned'; b.textContent='가지고 있어요'; }
+  else if(owned){ b.className='buy owned'; b.textContent=tr('가지고 있어요','Owned'); }
   else { b.className='buy'+(can?'':' no'); b.innerHTML=`${gemSvg} ${it.price}`; action=true; }
   if(it.kind==='gear'){
     const g=GEAR[it.id], [rn,rc]=RAR[g.r];
     const cnt=tm.bag.filter(o=>o.id===it.id).length+G.players.filter(p=>SLOTS.some(s=>p.equip[s]&&p.equip[s].id===it.id)).length;
-    extra=`<div class="st">${gearStats(it.id)}${cnt?` · 가진 개수 ${cnt}`:''}</div>`;
+    extra=`<div class="st">${gearStats(it.id)}${cnt?tr(` · 가진 개수 ${cnt}`,` · You have ${cnt}`):''}</div>`;
     it._rar=`<span class="rar" style="color:${rc}">${rn}</span>`;
   }
-  if(it.kind==='consume') extra=`<div class="st">가진 개수 ${tm[Object.keys(it.add)[0]]}</div>`;
+  if(it.kind==='consume') extra=`<div class="st">${tr('가진 개수','You have')} ${tm[Object.keys(it.add)[0]]}</div>`;
   let kb='';
   if(action && !locked && shopKeys.length<9){ shopKeys.push(it.id); kb=`<kbd>${shopKeys.length}</kbd>`; }
   const info=document.createElement('div');
@@ -1848,7 +1878,7 @@ function shopRow(it,locked){
   const btns=document.createElement('div'); btns.className='btns'; btns.append(b);
   if(canSell(it)){
     const s=document.createElement('button'); s.className='sell-btn';
-    s.innerHTML=`팔기 +${sellPrice(it.id)}`; s.title='산 값의 70%를 돌려받아요';
+    s.innerHTML=`${tr('팔기','Sell')} +${sellPrice(it.id)}`; s.title=tr('산 값의 70%를 돌려받아요','Get back 70% of the price');
     s.addEventListener('click',()=>sellItem(it.id)); btns.append(s);
   }
   row.append(cv,info,btns); return row;
@@ -1865,8 +1895,8 @@ function canSell(it){
 function sellItem(id){
   const it=CATALOG.find(c=>c.id===id), tm=G.team;
   if(!it || !canSell(it)){
-    if(it && it.kind==='gear') toast(null,'몸에 장착한 건 팔 수 없어요. 가방(I)에서 먼저 빼요','bad');
-    else if(it && it.kind==='map' && G.mapId===id) toast(null,'지금 있는 나라 지도는 팔 수 없어요','bad');
+    if(it && it.kind==='gear') toast(null,tr('몸에 장착한 건 팔 수 없어요. 가방(I)에서 먼저 빼요',"You can't sell gear you are wearing. Take it off in the bag (I) first"),'bad');
+    else if(it && it.kind==='map' && G.mapId===id) toast(null,tr('지금 있는 나라 지도는 팔 수 없어요',"You can't sell the map of the land you are in"),'bad');
     sfx.no(); return;
   }
   const n=sellPrice(id);
@@ -1878,13 +1908,13 @@ function sellItem(id){
   else if(it.kind==='gear'){ const b=tm.bag.find(o=>o.id===id); tm.bag=tm.bag.filter(o=>o!==b); }
   tm.diamonds+=n; sfx.buy(); bumpHud();
   G.players.forEach(clampHp);
-  toast(null,`${it.name}을(를) 팔아서 다이아몬드 ${n}개를 받았어요`,'good');
+  toast(null,tr(`${it.name}을(를) 팔아서 다이아몬드 ${n}개를 받았어요`,`Sold ${it.name} for ${n} diamonds`),'good');
   updateHUD(); renderShop(); save();
 }
 function ticketItem(L){
   const next=L+1, names=CATALOG.filter(c=>c.lv===next).map(c=>c.name).slice(0,4).join(', ');
-  return { id:'ticket', kind:'ticket', lv:L, toLv:next, name:`Lv.${next} 레벨 티켓`, price:ticketPrice(L),
-    desc:`다음 레벨로 가요! Lv.${next}에서 ${names} 등을 살 수 있어요.${next===6?' 조심해요, Lv.6부터 몬스터가 나타나요!':''}` };
+  return { id:'ticket', kind:'ticket', lv:L, toLv:next, name:tr(`Lv.${next} 레벨 티켓`,`Lv.${next} Level Ticket`), price:ticketPrice(L),
+    desc:tr(`다음 레벨로 가요! Lv.${next}에서 ${names} 등을 살 수 있어요.${next===6?' 조심해요, Lv.6부터 몬스터가 나타나요!':''}`,`On to the next level! At Lv.${next} you can buy ${names} and more.${next===6?' Careful, monsters appear from Lv.6!':''}`) };
 }
 function renderShop(){
   const L=G.level, tm=G.team;
@@ -1894,7 +1924,7 @@ function renderShop(){
   for(const lv of order){
     const locked=lv>L, old=lv<L;
     const sec=document.createElement('div'); sec.className='sec'+(locked?' locked':'')+(old?' old':'');
-    sec.innerHTML=`<h3>Lv.${lv} ${SEC_NAME[lv]}${locked?' <em>· 레벨 티켓을 사면 열려요</em>':''}${old?' <em>· 지난 레벨</em>':''}${lv===L?' <em>· 지금 레벨</em>':''}</h3>`;
+    sec.innerHTML=`<h3>Lv.${lv} ${SEC_NAME[lv]}${locked?tr(' <em>· 레벨 티켓을 사면 열려요</em>',' <em>· Opens with a level ticket</em>'):''}${old?tr(' <em>· 지난 레벨</em>',' <em>· Earlier level</em>'):''}${lv===L?tr(' <em>· 지금 레벨</em>',' <em>· Current level</em>'):''}</h3>`;
     for(const it of CATALOG.filter(c=>c.lv===lv)){
       if(it.id==='meadow' && G.ownedMaps.length<2) continue;
       sec.append(shopRow(it,locked));
@@ -1902,27 +1932,27 @@ function renderShop(){
     if(lv===L && L<MAX_LV) sec.append(shopRow(ticketItem(L),false));
     box.append(sec);
   }
-  $('shopFoot').innerHTML='팀 다이아몬드로 함께 사요 · 숫자 <kbd>1</kbd>~<kbd>9</kbd> 사기 · <kbd>Esc</kbd> 닫기';
+  $('shopFoot').innerHTML=tr('팀 다이아몬드로 함께 사요 · 숫자 <kbd>1</kbd>~<kbd>9</kbd> 사기 · <kbd>Esc</kbd> 닫기','The team shares diamonds · <kbd>1</kbd>–<kbd>9</kbd> to buy · <kbd>Esc</kbd> to close');
 }
 function act(id){
   const tm=G.team, L=G.level;
   const it=id==='ticket' ? ticketItem(L) : CATALOG.find(c=>c.id===id), row=$('item-'+id);
   if(!it) return;
-  if(it.lv>L){ sfx.no(); toast(null,'레벨 티켓을 사면 열려요','bad'); return; }
+  if(it.lv>L){ sfx.no(); toast(null,tr('레벨 티켓을 사면 열려요','Opens with a level ticket'),'bad'); return; }
   if(it.kind==='map' && isOwned(it)){ if(G.mapId!==id) travel(id); return; }
-  if(isOwned(it)){ toast(null,`${it.name}은(는) 이미 있어요!`); return; }
+  if(isOwned(it)){ toast(null,tr(`${it.name}은(는) 이미 있어요!`,`You already have ${it.name}!`)); return; }
   if(tm.diamonds<it.price){
     sfx.no(); if(row){ row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); }
-    toast(null,`다이아몬드가 ${it.price-tm.diamonds}개 더 필요해요`,'bad'); return;
+    toast(null,tr(`다이아몬드가 ${it.price-tm.diamonds}개 더 필요해요`,`You need ${it.price-tm.diamonds} more diamonds`),'bad'); return;
   }
   let msg='';
   if(it.kind==='gear'){
     // wear it right away if someone has that slot free, otherwise into the bag
     const slot=GEAR[id].slot, wearer=G.players.find(p=>!p.equip[slot]);
     if(wearer){ tm.diamonds-=it.price; wearer.equip[slot]={uid:uidSeq++,id}; if(slot==='weapon') wearer.mode='fight';
-      msg=`${G.mode===2?(wearer.idx+1)+'P가 ':''}${it.name}을(를) 바로 장착했어요!${slot==='weapon'?' (Q로 파기/싸우기 바꾸기)':''}`; }
-    else { if(!addToBag(id)){ sfx.no(); toast(null,'가방이 가득 찼어요! 가방에서 물건을 팔아 자리를 만들어요','bad'); return; }
-      tm.diamonds-=it.price; msg=`${it.name}을(를) 가방에 넣었어요. 가방(I)에서 장착해요`; }
+      msg=tr(`${G.mode===2?(wearer.idx+1)+'P가 ':''}${it.name}을(를) 바로 장착했어요!${slot==='weapon'?' (Q로 파기/싸우기 바꾸기)':''}`,`${G.mode===2?(wearer.idx+1)+'P ':''}equipped ${it.name}!${slot==='weapon'?' (Q swaps dig/fight)':''}`); }
+    else { if(!addToBag(id)){ sfx.no(); toast(null,tr('가방이 가득 찼어요! 가방에서 물건을 팔아 자리를 만들어요','Your bag is full! Sell something to make room'),'bad'); return; }
+      tm.diamonds-=it.price; msg=tr(`${it.name}을(를) 가방에 넣었어요. 가방(I)에서 장착해요`,`Put ${it.name} in the bag. Equip it from the bag (I)`); }
   } else {
     tm.diamonds-=it.price;
     if(it.kind==='tool') tm.owned.push(id);
@@ -1931,10 +1961,9 @@ function act(id){
     else if(it.kind==='map') G.ownedMaps.push(id);
     else if(it.kind==='consume') for(const k in it.add) tm[k]+=it.add[k];
     else if(it.kind==='ticket'){ G.level++; }
-    msg = it.kind==='tool' ? `${it.name}을(를) 샀어요! 이제 ${it.hits===1?'한 번에':it.hits+'번이면'} 땅을 팔 수 있어요`
-      : it.kind==='pet' ? `${it.name}가 친구가 되었어요! ${it.desc}`
-      : it.kind==='consume' ? `${it.name}을(를) 샀어요!`
-      : it.kind==='map' ? `${it.name}를 샀어요! 출발!` : it.kind==='ticket' ? `레벨 업!` : `${it.name}을(를) 샀어요!`;
+    msg = it.kind==='tool' ? tr(`${it.name}을(를) 샀어요! 이제 ${it.hits===1?'한 번에':it.hits+'번이면'} 땅을 팔 수 있어요`,`Bought the ${it.name}! Now it takes ${it.hits===1?'just one hit':it.hits+' hits'} to dig`)
+      : it.kind==='pet' ? tr(`${it.name}가 친구가 되었어요! ${it.desc}`,`The ${it.name} is your friend now! ${it.desc}`)
+      : it.kind==='map' ? tr(`${it.name}를 샀어요! 출발!`,`Bought the ${it.name}! Let's go!`) : it.kind==='ticket' ? tr('레벨 업!','Level up!') : tr(`${it.name}을(를) 샀어요!`,`Bought ${it.name}!`);
   }
   sfx.buy(); bumpHud();
   const p0=G.players[0];
@@ -1946,6 +1975,18 @@ function act(id){
   if(it.kind==='ticket'){ G.players.forEach(p=>p.hp=stats(p).maxHp); if(G.level>=6) spawnMonsters(); setTimeout(()=>levelUp(G.level),400); }
   if(id==='trophy') setTimeout(()=>levelUp('clear'),500);
 }
+const LEVEL_EN={
+  2:'Now you can buy pet friends at the shop. The puppy, kitty and cheetah each have a different power.',
+  3:'Now you can buy the diamond radar, the golden crown and maps to new lands.',
+  4:'Now you can buy the diamond drill, the baby dragon and the Candy Land map.',
+  5:'Monsters are coming soon! Get ready with swords, armor, shoes, a bow and potions. Q switches between digging and fighting.',
+  6:'Monsters are here! Watch out for goblins, skeleton archers and slimes in the mountains and water. Defeat them and they drop diamonds.',
+  7:'More monsters, and water spirits appear too. You can buy a helmet, lightning boots and a turtle.',
+  8:'Tough rock golems appear! You can buy the diamond sword, diamond armor and starlight staff.',
+  9:'A giant squid appears in the water! You can buy the legendary bow and the phoenix.',
+  10:'This is the top level! Buy the legendary trophy to clear the game!',
+  clear:'You got the legendary trophy! You finished every adventure and became true explorers. Keep exploring, defeat monsters and collect more diamonds.',
+};
 const LEVEL_TEXT={
   2:['이제 상점에서 펫 친구를 살 수 있어요. 강아지, 고양이, 치타는 저마다 다른 능력이 있어요.',['dog','cat','cheetah']],
   3:['다이아 레이더, 황금 왕관, 새로운 나라 지도를 살 수 있어요.',['radar','crown','snow']],
@@ -1961,11 +2002,11 @@ const LEVEL_TEXT={
 function levelUp(L){
   closeShop();
   const clear=L==='clear';
-  $('mTitle').textContent = clear ? '전설의 탐험대!' : `${G.mode===2?'우리 팀 ':''}레벨 ${L}! ${LV_NAME[L]}`;
-  $('mText').textContent=LEVEL_TEXT[L][0];
+  $('mTitle').textContent = clear ? tr('전설의 탐험대!','Legendary Explorers!') : tr(`${G.mode===2?'우리 팀 ':''}레벨 ${L}! ${LV_NAME[L]}`,`Level ${L}! ${LV_NAME[L]}`);
+  $('mText').textContent=tr(LEVEL_TEXT[L][0],LEVEL_EN[L]);
   const pics=$('mPics'); pics.innerHTML='';
   LEVEL_TEXT[L][1].forEach(id=>{ const cv=document.createElement('canvas'); cv.width=96; cv.height=96; drawItemIcon(cv,id); pics.append(cv); });
-  $('mStats').innerHTML=`<div>찾은 다이아몬드<b>${G.team.total}</b></div><div>맞힌 문제<b>${G.team.solved}</b></div><div>물리친 몬스터<b>${G.team.kills}</b></div>`;
+  $('mStats').innerHTML=`<div>${tr('찾은 다이아몬드','Diamonds found')}<b>${G.team.total}</b></div><div>${tr('맞힌 문제','Problems solved')}<b>${G.team.solved}</b></div><div>${tr('물리친 몬스터','Monsters defeated')}<b>${G.team.kills}</b></div>`;
   $('modal').hidden=false; (clear?sfx.win:sfx.level)(); $('mClose').focus();
   for(const p of G.players) burst(p.x*T+T/2,p.y*T,['#ffcf3f','#ff6fa8','#5ee7ff','#63e39a','#a072ea','#ffffff'],clear?80:40,clear?380:300,T/10,300);
 }
@@ -1974,7 +2015,7 @@ function travel(id){
   G.mapId=id; loadMap(); placePlayers();
   particles=[]; floats=[]; flyers=[];
   closeShop(); snapCam();
-  sfx.travel(); toast(null,`${THEMES[id].name}에 도착했어요! 호수 2곳의 보물상자도 찾아봐요`,'good');
+  sfx.travel(); toast(null,tr(`${THEMES[id].name}에 도착했어요! 호수 2곳의 보물상자도 찾아봐요`,`Welcome to ${THEMES[id].name}! Look for the treasure chests in both lakes`),'good');
   save();
 }
 function openShop(){ if(screen!=='game' || !$('modal').hidden || !$('quiz').hidden) return; if(!$('inv').hidden) closeInv(); G.players.forEach(p=>p.dirStack=[]); renderShop(); $('shop').hidden=false; }
@@ -2003,8 +2044,8 @@ function startNew(mode,genders){
   G.players.forEach(p=>p.hp=stats(p).maxHp);
   particles=[]; floats=[]; flyers=[];
   showGame(); save();
-  toast(null,isTouch&&mode===1?'파기 버튼을 10번 눌러 땅을 파 봐요!':'파기 키를 10번 눌러 땅을 파 봐요!');
-  setTimeout(()=>{ if(screen==='game' && world.chests.some(c=>!c.opened)) toast(null,'다이아몬드를 주울 때는 수학 문제를 풀어요. 호수 속 보물상자도 찾아봐요!'); },6000);
+  toast(null,isTouch&&mode===1?tr('파기 버튼을 10번 눌러 땅을 파 봐요!','Press the Dig button 10 times to dig!'):tr('파기 키를 10번 눌러 땅을 파 봐요!','Press the dig key 10 times to dig!'));
+  setTimeout(()=>{ if(screen==='game' && world.chests.some(c=>!c.opened)) toast(null,tr('다이아몬드를 주울 때는 수학 문제를 풀어요. 호수 속 보물상자도 찾아봐요!','Solve a math problem to pick up diamonds. Look for the treasure chests in the lakes too!')); },6000);
 }
 function continueGame(given){
   ac();
@@ -2028,7 +2069,7 @@ function continueGame(given){
   particles=[]; floats=[]; flyers=[];
   showGame(); pets.forEach(pe=>{ pe.x=pe.owner.x-0.6; pe.y=pe.owner.y+0.1; });
   save();
-  toast(null,`다시 왔군요! ${THEMES[G.mapId].name}에서 계속 탐험해요`,'good');
+  toast(null,tr(`다시 왔군요! ${THEMES[G.mapId].name}에서 계속 탐험해요`,`Welcome back! Keep exploring ${THEMES[G.mapId].name}`),'good');
 }
 
 /* ---------- save slots (3 in this browser) + save files for another computer ---------- */
@@ -2037,30 +2078,30 @@ let savesMode='save';
 function saveSummary(d){
   const when=d.savedAt?new Date(d.savedAt):null;
   const pad=n=>String(n).padStart(2,'0');
-  const date=when?`${when.getMonth()+1}월 ${when.getDate()}일 ${pad(when.getHours())}:${pad(when.getMinutes())}`:'';
-  return `${d.players.length>1?'2인':'1인'} · Lv.${d.level} ${LV_NAME[d.level]||''} · ${THEMES[d.mapId].name} · 다이아몬드 ${d.team.diamonds|0}개${date?' · '+date:''}`;
+  const date=when?tr(`${when.getMonth()+1}월 ${when.getDate()}일`,`${when.getMonth()+1}/${when.getDate()}`)+` ${pad(when.getHours())}:${pad(when.getMinutes())}`:'';
+  return `${d.players.length>1?tr('2인','2 players'):tr('1인','1 player')} · Lv.${d.level} ${LV_NAME[d.level]||''} · ${THEMES[d.mapId].name} · ${tr(`다이아몬드 ${d.team.diamonds|0}개`,`${d.team.diamonds|0} diamonds`)}${date?' · '+date:''}`;
 }
 function openSaves(mode){
   savesMode=mode;
   if(mode==='save'){ if(screen!=='game' || !$('quiz').hidden) return; if(!$('inv').hidden) closeInv(); $('shop').hidden=true; G.players.forEach(p=>p.dirStack=[]); }
-  $('savesTitle').textContent = mode==='save' ? '저장하기' : '불러오기';
+  $('savesTitle').textContent = mode==='save' ? tr('저장하기','Save') : tr('불러오기','Load');
   $('savesLead').textContent = mode==='save'
-    ? '저장할 칸을 골라요. 게임은 자동으로도 저장되지만, 칸에 저장하면 그때 상태로 언제든 돌아올 수 있어요.'
-    : '불러올 저장을 골라요.';
+    ? tr('저장할 칸을 골라요. 게임은 자동으로도 저장되지만, 칸에 저장하면 그때 상태로 언제든 돌아올 수 있어요.','Pick a slot to save to. The game also saves on its own, but a slot lets you come back to this moment any time.')
+    : tr('불러올 저장을 골라요.','Pick a save to load.');
   $('exportBtn').hidden = mode!=='save';
   renderSlots(); $('saves').hidden=false;
 }
 function renderSlots(){
   const box=$('slots'); box.innerHTML='';
   const rows=[];
-  if(savesMode==='load'){ const a=readSave(); rows.push({ key:SAVE_KEY, name:'자동 저장', d:a, auto:true }); }
-  for(let i=0;i<SLOT_COUNT;i++) rows.push({ key:slotKey(i), name:`${i+1}번 칸`, d:validSave(parseKey(slotKey(i))) });
+  if(savesMode==='load'){ const a=readSave(); rows.push({ key:SAVE_KEY, name:tr('자동 저장','Autosave'), d:a, auto:true }); }
+  for(let i=0;i<SLOT_COUNT;i++) rows.push({ key:slotKey(i), name:tr(`${i+1}번 칸`,`Slot ${i+1}`), d:validSave(parseKey(slotKey(i))) });
   for(const r of rows){
     const el=document.createElement('div'); el.className='slotrow'+(r.auto?' auto':'');
-    el.innerHTML=`<div><b>${r.name}</b><small>${r.d?saveSummary(r.d):'비어 있어요'}</small></div>`;
+    el.innerHTML=`<div><b>${r.name}</b><small>${r.d?saveSummary(r.d):tr('비어 있어요','Empty')}</small></div>`;
     const b=document.createElement('button');
-    if(savesMode==='save'){ b.className='buy'; b.textContent=r.d?'덮어쓰기':'여기에 저장'; b.addEventListener('click',()=>saveToSlot(r.key,r.name)); }
-    else { b.className='buy go'+(r.d?'':' no'); b.textContent='불러오기'; b.disabled=!r.d; b.addEventListener('click',()=>loadFrom(r.d)); }
+    if(savesMode==='save'){ b.className='buy'; b.textContent=r.d?tr('덮어쓰기','Overwrite'):tr('여기에 저장','Save here'); b.addEventListener('click',()=>saveToSlot(r.key,r.name)); }
+    else { b.className='buy go'+(r.d?'':' no'); b.textContent=tr('불러오기','Load'); b.disabled=!r.d; b.addEventListener('click',()=>loadFrom(r.d)); }
     el.append(b); box.append(el);
   }
 }
@@ -2068,7 +2109,7 @@ function saveToSlot(key,name){
   const data=snapshot();
   const ok=store(()=>{ localStorage.setItem(key,JSON.stringify(data)); return true; });
   save();
-  if(ok){ sfx.buy(); toast(null,`${name}에 저장했어요!`,'good'); } else { sfx.no(); toast(null,'저장하지 못했어요. 이 브라우저는 저장 공간을 쓸 수 없어요. 파일로 내보내기를 써 보세요','bad'); }
+  if(ok){ sfx.buy(); toast(null,tr(`${name}에 저장했어요!`,`Saved to ${name}!`),'good'); } else { sfx.no(); toast(null,tr('저장하지 못했어요. 이 브라우저는 저장 공간을 쓸 수 없어요. 파일로 내보내기를 써 보세요','Could not save. This browser blocks storage. Try Export to file instead'),'bad'); }
   renderSlots();
 }
 function loadFrom(d){
@@ -2082,14 +2123,14 @@ function exportSave(){
   try{
     const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'application/json'})); a.download=name;
     document.body.append(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000);
-    toast(null,`${name} 파일로 내보냈어요. 다른 컴퓨터에서 "파일에서 불러오기"로 열어요`,'good');
-  }catch(e){ toast(null,'여기서는 파일을 내려받을 수 없어요. 저장 칸을 써 주세요','bad'); }
+    toast(null,tr(`${name} 파일로 내보냈어요. 다른 컴퓨터에서 "파일에서 불러오기"로 열어요`,`Exported ${name}. On another computer, open it with "Load from file"`),'good');
+  }catch(e){ toast(null,tr('여기서는 파일을 내려받을 수 없어요. 저장 칸을 써 주세요','File downloads are blocked here. Use a save slot instead'),'bad'); }
 }
 function importSave(file){
   const r=new FileReader();
   r.onload=()=>{
     const d=validSave(store(()=>JSON.parse(r.result)));
-    if(!d){ sfx.no(); toast(null,'이 파일은 다이아몬드 탐험대 저장 파일이 아니에요','bad'); return; }
+    if(!d){ sfx.no(); toast(null,tr('이 파일은 다이아몬드 탐험대 저장 파일이 아니에요','This is not a Diamond Explorers save file'),'bad'); return; }
     loadFrom(d);
   };
   r.readAsText(file);
@@ -2104,19 +2145,44 @@ function goTitle(){
 }
 function setupTitle(){
   $('title').hidden=false; $('stepMode').hidden=false; $('stepHero').hidden=true; titleGenders=[];
-  const d=readSave(), cb=$('continueBtn');
-  if(d){ cb.hidden=false; cb.textContent=`이어서 하기 · ${d.players.length>1?'2인':'1인'} · Lv.${d.level} · ${THEMES[d.mapId].name}`; } else cb.hidden=true;
   if(!world) world=genWorld(Math.floor(Math.random()*1e9),'meadow');
-  $('titleKeys').innerHTML=`<li><b>혼자</b><span><kbd>←↑↓→</kbd> 이동</span><span><kbd>Space</kbd> 파기·공격</span><span><kbd>Shift</kbd> 줍기</span><span><kbd>Q</kbd> 바꾸기</span><span><kbd>R</kbd> 물약</span><span><kbd>I</kbd> 가방</span><span><kbd>B</kbd> 상점</span></li>
-    <li><b>1P</b><span><kbd>WASD</kbd> 이동</span><span><kbd>Space</kbd> 파기·공격</span><span><kbd>왼쪽 Shift</kbd> 줍기</span><span><kbd>Q</kbd> 바꾸기</span><span><kbd>R</kbd> 물약</span><span><kbd>E</kbd> 상점</span></li>
-    <li><b>2P</b><span><kbd>←↑↓→</kbd> 이동</span><span><kbd>Enter</kbd> 파기·공격</span><span><kbd>P</kbd> 줍기</span><span><kbd>O</kbd> 바꾸기</span><span><kbd>K</kbd> 물약</span><span><kbd>L</kbd> 상점</span></li>
-    <li><b>같이</b><span><kbd>I</kbd> 가방</span></li>`;
+  renderTitleText();
+}
+function renderTitleText(){
+  const d=readSave(), cb=$('continueBtn');
+  if(d){ cb.hidden=false; cb.textContent=`${tr('이어서 하기','Continue')} · ${d.players.length>1?tr('2인','2P'):tr('1인','1P')} · Lv.${d.level} · ${THEMES[d.mapId].name}`; } else cb.hidden=true;
+  $('titleKeys').innerHTML=`<li><b>${tr('혼자','Solo')}</b>${keyRow('solo')}</li><li>${keyRow('p1')}</li><li>${keyRow('p2')}</li><li>${keyRow('both')}</li>`;
+  if(!$('stepHero').hidden) heroQText();
 }
 function heroStep(){
   const i=titleGenders.length;
   $('stepMode').hidden=true; $('stepHero').hidden=false;
-  $('heroQ').innerHTML = titleMode===1 ? '누구로 탐험할까요?' : `<span class="who p${i}">${i+1}P</span> 는 누구로 할까요?`;
+  heroQText();
   $('stepHero').querySelector('.hero').focus();
+}
+function heroQText(){
+  const i=titleGenders.length;
+  $('heroQ').innerHTML = titleMode===1 ? tr('누구로 탐험할까요?','Who will you play as?') : tr(`<span class="who p${i}">${i+1}P</span> 는 누구로 할까요?`,`Who is <span class="who p${i}">${i+1}P</span>?`);
+}
+/* swap every visible string to the chosen language */
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.title=tr('다이아몬드 탐험대','Diamond Explorers');
+  document.querySelectorAll('[data-en]').forEach(el=>{ if(el.dataset.ko===undefined) el.dataset.ko=el.innerHTML; el.innerHTML=LANG==='en'?el.dataset.en:el.dataset.ko; });
+  document.querySelectorAll('[data-en-aria]').forEach(el=>{
+    if(el.dataset.koAria===undefined) el.dataset.koAria=el.getAttribute('aria-label')||'';
+    const v=LANG==='en'?el.dataset.enAria:el.dataset.koAria; el.setAttribute('aria-label',v); if(el.hasAttribute('title')) el.title=v;
+  });
+  document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+  $('langBtn').textContent=LANG==='en'?'한':'EN';
+  $('langBtn').title=LANG==='en'?'한국어로 바꾸기':'Switch to English';
+  if(screen==='title') renderTitleText();
+  else if(G){ buildHUD(); updateHUD(); [0,1].forEach(i=>{ if(i<G.mode) $('help'+i).innerHTML=keyHelp(i); }); }
+}
+function setLang(l){
+  if(l===LANG) return;
+  LANG=l; try{ localStorage.setItem(LANG_KEY,l); }catch(e){}
+  applyLang(); sfx.tick();
 }
 function drawTitleArt(){
   const pi=titleMode===2?titleGenders.length:0;
@@ -2297,7 +2363,7 @@ function drawMinimap(){
     ctx.fillStyle=G.mode===2?PCOL[p.idx]:'#ffffff'; ctx.strokeStyle='#18214a'; ctx.lineWidth=1.5;
     ctx.beginPath(); ctx.arc(x+(p.x+0.5)*sc,y+(p.y+0.5)*sc,sc*1.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
   }
-  label(THEMES[G.mapId].name+(world.monsters.length?` · 몬스터 ${world.monsters.filter(m=>m.alive).length}`:''),x+mw/2,y+mh+16,'#ffffff',15);
+  label(THEMES[G.mapId].name+(world.monsters.length?tr(` · 몬스터 ${world.monsters.filter(m=>m.alive).length}`,` · Monsters ${world.monsters.filter(m=>m.alive).length}`):''),x+mw/2,y+mh+16,'#ffffff',15);
 }
 
 let last=performance.now();
@@ -2430,7 +2496,9 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden && screen=
 /* ---------- boot ---------- */
 muted = store(()=>localStorage.getItem(SAVE_KEY+'-muted'))==='1';
 $('sndOn').hidden=muted; $('sndOff').hidden=!muted;
-layout(); setupTitle();
+document.querySelectorAll('.lang-opt').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+$('langBtn').addEventListener('click',()=>{ $('langBtn').blur(); setLang(LANG==='en'?'ko':'en'); cvs.focus(); });
+layout(); setupTitle(); applyLang();
 requestAnimationFrame(frame);
 })();
 </script>

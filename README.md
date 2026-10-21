@@ -14,4 +14,12 @@
 
 가방은 `I`. 저장은 오른쪽 위 저장 버튼(저장 칸 3개 + 파일로 내보내기).
 
+오른쪽 위(처음 화면은 위쪽)의 언어 버튼으로 **한국어 / English**를 바꿀 수 있어요.
+
 `index.html` 하나로 된 게임이라 내려받아서 브라우저로 열어도 됩니다.
+
+## English
+
+Diamond Explorers is a 1–2 player digging game for elementary school kids. Dig for diamonds, solve grade 2 math problems (addition, subtraction, times tables 1–10) to pick them up, buy gear and pets, and fight monsters from Lv.6. Use the language button to switch between Korean and English.
+
+Play: https://josephdreamer11.github.io/diamond-explorers/
