@@ -174,6 +174,7 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 /* Quiz */
 .qpanel{position:absolute;top:0;bottom:0;left:0;right:0;display:grid;place-items:center;overflow:auto;background:rgba(12,18,48,.5);
   padding-block:16px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+body.two .qpanel{background:transparent;pointer-events:none} body.two .qpanel .card{pointer-events:auto}
 body.two .qpanel.p0{right:50%;padding-right:8px} body.two .qpanel.p1{left:50%;padding-left:8px}
 .qpanel .card{width:min(430px,100%);border-color:var(--gem);padding:18px}
 .qpanel.hard .card{border-color:#ff7ad9;background:linear-gradient(180deg,rgba(70,20,80,.95),rgba(20,28,66,.95))}
@@ -1329,7 +1330,7 @@ function makeHardProblem(){
   const a=rnd(12,49), b=rnd(3,9); return { text:`${a} × ${b}`, ans:a*b };
 }
 function openQuiz(p,n,onOK,what,hard=false){
-  dropHeld(); G.players.forEach(q=>q.dirStack=[]);
+  dropHeld(); p.dirStack=[]; p.moving=false;
   const other=quizzes[1-p.idx];
   quizzes[p.idx]={ p, n, onOK, what, hard, prob:hard?makeHardProblem():makeProblem(), busy:false, val:'', t0:performance.now() };
   // both solving at once: 1P keeps the keyboard, 2P uses the mouse (either can click to take the keyboard)
@@ -1372,7 +1373,7 @@ function refreshKb(){
     el.classList.toggle('kb',kbOwner===i);
     const box=el.querySelector('.q-input'); if(!box) continue;
     if(isTouch || G.mode===1){ box.innerHTML=''; continue; }
-    if(kbOwner===i) box.innerHTML=`<span class="who-kb">${tr('키보드로 입력 중','Typing with keyboard')}</span>`;
+    if(kbOwner===i){ const ok=quizzes[0]&&quizzes[1]?'Space / Enter':i===0?'Space':'Enter'; box.innerHTML=`<span class="who-kb">${tr(`키보드로 입력 중 · ${ok} 확인`,`Typing with keyboard · ${ok} to confirm`)}</span>`; }
     else box.innerHTML=`<span class="who-mouse">${tr('마우스로 숫자를 눌러요','Click the numbers with the mouse')}</span><button data-k="kb">${tr('키보드로 바꾸기','Use keyboard')}</button>`;
   }
 }
@@ -1452,7 +1453,7 @@ function revealTile(x,y,dirt){
 }
 function act1(p){ if(p.mode==='fight') attack(p); else dig(p); }
 function dig(p){
-  if(screen!=='game' || modalOpen() || !p || p.moving || p.dead>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.moving || p.dead>0) return;
   const t=tileAt(p.tx,p.ty);
   if(t.type==='water'){ toast(p,tr('물속은 팔 수 없어요. 반짝이는 보물상자를 찾아봐요!',"You can't dig underwater. Look for the shiny treasure chest!")); return; }
   if(t.dug){ toast(p,t.d>0?tr(`다이아몬드가 있어요! ${grabKeyName(p)}로 주워요`,`There's a diamond! Press ${grabKeyName(p)} to pick it up`):tr('이미 판 곳이에요. 다른 곳을 파 봐요!','Already dug here. Try another spot!')); return; }
@@ -1543,7 +1544,7 @@ function grab(p){
   toast(p, ch ? tr('이 보물상자는 이미 열었어요','This chest is already open') : t.type==='water'?tr('여기엔 주울 게 없어요. 보물상자 위에서 눌러요!','Nothing to pick up here. Try it on top of a chest!'):tr('주울 다이아몬드가 없어요. 먼저 땅을 파 봐요!','No diamonds here. Dig first!'));
 }
 function swapMode(p){
-  if(screen!=='game' || modalOpen() || !p || p.dead>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.dead>0) return;
   p.mode = p.mode==='dig' ? 'fight' : 'dig';
   const w=weaponOf(p);
   floatText(p.x*T+T/2,p.y*T-T*0.2, p.mode==='fight' ? tr(`싸우기: ${w.name}`,`Fight: ${w.name}`) : tr(`파기: ${curTool().name}`,`Dig: ${curTool().name}`), p.mode==='fight'?'#ff9a9a':'#ffd28a',0.38);
@@ -1551,7 +1552,7 @@ function swapMode(p){
   sfx.tick(); updateHUD();
 }
 function drinkPotion(p){
-  if(screen!=='game' || modalOpen() || !p || p.dead>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.dead>0) return;
   const tm=G.team, s=stats(p);
   if(p.hp>=s.maxHp){ toast(p,tr('HP가 가득 차 있어요!','HP is already full!')); return; }
   const missing=s.maxHp-p.hp;
@@ -1595,7 +1596,7 @@ function tryMove(p,d){
 const FACE={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const liveMonsters=()=>world.monsters.filter(m=>m.alive);
 function attack(p){
-  if(screen!=='game' || modalOpen() || !p || p.dead>0 || p.atkCd>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.dead>0 || p.atkCd>0) return;
   const w=weaponOf(p), s=stats(p), tm=G.team;
   const [fx,fy]=FACE[p.dir];
   if(w.atk==='arrow' && tm.arrows<=0){ toast(p,tr('화살이 없어요! 상점에서 사요','Out of arrows! Buy more at the shop'),'bad'); p.atkCd=0.4; return; }
@@ -2343,10 +2344,11 @@ let hudT=0;
 function update(dt){
   time+=dt;
   if(screen==='game' && G){
-    const paused=modalOpen();
+    const paused=otherModal();
     if(!paused){
       for(const p of G.players){
         if(p.dead>0){ p.dead-=dt; if(p.dead<=0) revive(p); continue; }
+        if(quizzes[p.idx]){ p.dirStack=[]; if(p.swing>0) p.swing=Math.max(0,p.swing-dt*5); continue; }
         p.inv=Math.max(0,p.inv-dt); p.atkCd=Math.max(0,p.atkCd-dt);
         const s=stats(p);
         if(p.hp<s.maxHp){ p.hp=Math.min(s.maxHp,p.hp+dt*(s.regen+(time-p.lastHit>5?0.6:0))); }
@@ -2364,7 +2366,7 @@ function update(dt){
         if(onWater(p) && Math.random()<0.05) particles.push({x:p.x*T+T*(0.3+Math.random()*0.4),y:p.y*T+T*0.2,vx:0,vy:-20,g:-10,life:0.8,max:0.8,col:'bubble',size:T/14});
         updateRadar(p,dt);
       }
-      updatePets(dt); updateMonsters(dt); updateShots(dt);
+      updatePets(dt); if(!anyQuiz()){ updateMonsters(dt); updateShots(dt); }
       hudT-=dt; if(hudT<=0){ hudT=0.2; updateHUD(); }
     }
     const c=camTarget(), k=Math.min(1,dt*8);
@@ -2521,15 +2523,12 @@ window.addEventListener('keydown',e=>{
     const dg=/^(?:Digit|Numpad)([0-9])$/.exec(code);
     if(dg){ e.preventDefault(); quizInput(kbOwner,dg[1]); return; }
     if(code==='Backspace'){ e.preventDefault(); quizInput(kbOwner,'del'); return; }
-    if(code==='Enter'||code==='NumpadEnter'){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
+    if((code==='Enter'||code==='NumpadEnter') && G.mode===1){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
     if(code==='Escape'){ e.preventDefault(); if(quizzes[kbOwner]) closeQuiz(kbOwner); return; }
     if(code==='Tab' && quizzes[0] && quizzes[1]){ e.preventDefault(); kbOwner=1-kbOwner; refreshKb(); return; }
-    if(G.mode===2){
-      if(code==='ShiftLeft' && !e.repeat){ e.preventDefault(); grab(G.players[0]); return; }
-      if(code==='KeyP' && !e.repeat){ e.preventDefault(); grab(G.players[1]); return; }
-    }
-    if(code==='Space' || /^Arrow/.test(code)) e.preventDefault();
-    return;
+    if(G.mode===1){ if(code==='Space'){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); } else if(/^Arrow|^Shift/.test(code)) e.preventDefault(); return; }
+    // the solver confirms with their own action key (1P Space, 2P Enter); the other key stays with the free player
+    if((code==='Space' && quizzes[0]) || ((code==='Enter'||code==='NumpadEnter') && quizzes[1])){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
   }
   if(!$('modal').hidden){ if(code==='Enter'||code==='Escape'||code==='Space'||code==='NumpadEnter'){ e.preventDefault(); $('modal').hidden=true; cvs.focus(); } return; }
   if(!$('saves').hidden){ if(code==='Escape'){ e.preventDefault(); closeSaves(); } return; }
@@ -2544,7 +2543,7 @@ window.addEventListener('keydown',e=>{
     return;
   }
   const dm=dirFor(code);
-  if(dm){ e.preventDefault(); const [p,d]=dm; if(p.dead>0) return; if(!p.dirStack.includes(d)) p.dirStack.push(d); if(!p.moving) p.dir=d; return; }
+  if(dm){ e.preventDefault(); const [p,d]=dm; if(p.dead>0 || quizzes[p.idx]) return; if(!p.dirStack.includes(d)) p.dirStack.push(d); if(!p.moving) p.dir=d; return; }
   const P0=G.players[0], P1=G.players[1];
   if(code==='Space'){ e.preventDefault(); if(!e.repeat || P0.mode==='fight') act1(P0); return; }
   if(code==='KeyI'){ e.preventDefault(); openInv(0); return; }
