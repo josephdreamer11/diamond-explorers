@@ -1306,6 +1306,8 @@ function toast(p,msg,kind=''){
 const QUICK_MS=7000;                       // answer within 7 s → double diamonds
 const quizzes=[null,null];                 // one open problem per player
 let kbOwner=0;                             // whose panel the keyboard types into
+// fixed rule, no mouse switching: whoever is solving alone types; if both are solving, 1P types and 2P clicks
+function syncKb(){ kbOwner = quizzes[0] ? 0 : 1; refreshKb(); }
 const anyQuiz=()=>!!(quizzes[0]||quizzes[1]);
 function makeProblem(){
   const r=Math.random();
@@ -1331,11 +1333,8 @@ function makeHardProblem(){
 }
 function openQuiz(p,n,onOK,what,hard=false){
   dropHeld(); p.dirStack=[]; p.moving=false;
-  const other=quizzes[1-p.idx];
   quizzes[p.idx]={ p, n, onOK, what, hard, prob:hard?makeHardProblem():makeProblem(), busy:false, val:'', t0:performance.now() };
-  // both solving at once: 1P keeps the keyboard, 2P uses the mouse (either can click to take the keyboard)
-  kbOwner = other ? 0 : p.idx;
-  buildQuiz(p.idx); refreshKb();
+  buildQuiz(p.idx); syncKb();
 }
 function buildQuiz(i){
   const q=quizzes[i], el=$('quiz'+i);
@@ -1373,8 +1372,8 @@ function refreshKb(){
     el.classList.toggle('kb',kbOwner===i);
     const box=el.querySelector('.q-input'); if(!box) continue;
     if(isTouch || G.mode===1){ box.innerHTML=''; continue; }
-    if(kbOwner===i){ const ok=quizzes[0]&&quizzes[1]?'Space / Enter':i===0?'Space':'Enter'; box.innerHTML=`<span class="who-kb">${tr(`키보드로 입력 중 · ${ok} 확인`,`Typing with keyboard · ${ok} to confirm`)}</span>`; }
-    else box.innerHTML=`<span class="who-mouse">${tr('마우스로 숫자를 눌러요','Click the numbers with the mouse')}</span><button data-k="kb">${tr('키보드로 바꾸기','Use keyboard')}</button>`;
+    if(kbOwner===i){ const ok=i===0?'Space':'Enter'; box.innerHTML=`<span class="who-kb">${tr(`키보드로 입력 중 · ${ok} 확인`,`Typing with keyboard · ${ok} to confirm`)}</span>`; }
+    else box.innerHTML=`<span class="who-mouse">${tr('1P가 키보드를 쓰는 중이라 마우스로 숫자를 눌러요','1P is using the keyboard, so click the numbers')}</span>`;
   }
 }
 function tickQuizTimers(){
@@ -1422,8 +1421,7 @@ function submitQuiz(i){
 }
 function closeQuiz(i){
   quizzes[i]=null; const el=$('quiz'+i); el.hidden=true; el.innerHTML='';
-  if(quizzes[1-i]) kbOwner=1-i;
-  refreshKb(); if(!anyQuiz()) cvs.focus();
+  syncKb(); if(!anyQuiz()) cvs.focus();
 }
 function closeAllQuizzes(){ [0,1].forEach(i=>{ quizzes[i]=null; $('quiz'+i).hidden=true; $('quiz'+i).innerHTML=''; }); }
 [0,1].forEach(i=>{
@@ -1431,9 +1429,7 @@ function closeAllQuizzes(){ [0,1].forEach(i=>{ quizzes[i]=null; $('quiz'+i).hidd
     if(!quizzes[i]) return;
     const b=e.target.closest('button');
     if(b && b.dataset.k==='later'){ closeQuiz(i); return; }
-    // clicking anywhere on a panel hands it the keyboard
-    if(kbOwner!==i){ kbOwner=i; refreshKb(); }
-    if(!b || b.dataset.k==='kb') return;
+    if(!b) return;
     quizInput(i, b.dataset.d!==undefined ? b.dataset.d : b.dataset.k);
   });
 });
@@ -2525,10 +2521,11 @@ window.addEventListener('keydown',e=>{
     if(code==='Backspace'){ e.preventDefault(); quizInput(kbOwner,'del'); return; }
     if((code==='Enter'||code==='NumpadEnter') && G.mode===1){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
     if(code==='Escape'){ e.preventDefault(); if(quizzes[kbOwner]) closeQuiz(kbOwner); return; }
-    if(code==='Tab' && quizzes[0] && quizzes[1]){ e.preventDefault(); kbOwner=1-kbOwner; refreshKb(); return; }
     if(G.mode===1){ if(code==='Space'){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); } else if(/^Arrow|^Shift/.test(code)) e.preventDefault(); return; }
     // the solver confirms with their own action key (1P Space, 2P Enter); the other key stays with the free player
-    if((code==='Space' && quizzes[0]) || ((code==='Enter'||code==='NumpadEnter') && quizzes[1])){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
+    const isEnter=code==='Enter'||code==='NumpadEnter';
+    if((code==='Space' && kbOwner===0) || (isEnter && kbOwner===1)){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
+    if((code==='Space' && quizzes[0]) || (isEnter && quizzes[1])){ e.preventDefault(); return; } // a mouse solver's own key does nothing
   }
   if(!$('modal').hidden){ if(code==='Enter'||code==='Escape'||code==='Space'||code==='NumpadEnter'){ e.preventDefault(); $('modal').hidden=true; cvs.focus(); } return; }
   if(!$('saves').hidden){ if(code==='Escape'){ e.preventDefault(); closeSaves(); } return; }
