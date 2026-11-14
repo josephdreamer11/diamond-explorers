@@ -470,18 +470,15 @@ const GEAR = {
 const FIST = { name:'주먹', nameEn:'Fists', atk:'melee', dmg:1, cd:.4 };
 const CATALOG = [
   ...TOOLS.slice(1).map(t=>({ ...t, kind:'tool', lv:1, desc: t.hits===1 ? '단 한 번에 땅 파기!' : `${t.hits}번 파면 한 칸`, descEn: t.hits===1 ? 'Digs a tile in one hit!' : `${t.hits} hits to dig a tile` })),
+  { id:'keys',    kind:'consume', lv:1, name:'보물상자 열쇠', price:10, desc:'호수 속 보물상자를 하나 열 수 있어요. 상자에는 다이아몬드가 5~50개 들어 있어요', add:{keys:1}, nameEn:'Chest Key', descEn:'Opens one treasure chest in a lake. Each chest holds 5 to 50 diamonds' },
   { id:'dog',     kind:'pet',  lv:2, name:'강아지',   price:50,  desc:'팀 공격력 +2. 가까운 몬스터를 콱 물어 줘요', nameEn:'Puppy', descEn:'Team attack +2. Bites nearby monsters' },
   { id:'cat',     kind:'pet',  lv:2, name:'고양이',   price:60,  desc:'땅속 다이아몬드를 분홍빛으로 알려 주고 방어력 +1', nameEn:'Kitty', descEn:'Shows buried diamonds with a pink glow. Defense +1' },
   { id:'cheetah', kind:'pet',  lv:2, name:'치타',     price:70,  desc:'함께 달려서 이동 속도가 50% 빨라져요', nameEn:'Cheetah', descEn:'Runs with you: move 50% faster' },
   { id:'radar',   kind:'item', lv:3, name:'다이아 레이더', price:60, desc:'가장 가까운 다이아몬드 쪽을 화살표로 알려 줘요', nameEn:'Diamond Radar', descEn:'An arrow points to the nearest diamond' },
   { id:'vacuum',  kind:'item', lv:3, name:'다이아 청소기', price:60, desc:'주변 3×3칸(9칸)의 다이아몬드를 한 번에 빨아들여요. 대신 더 어려운 문제(세 자리 수)가 나와요', nameEn:'Diamond Vacuum', descEn:'Sucks up diamonds from the 3×3 tiles (9 tiles) around you at once. The problem is harder, though (3-digit numbers)' },
   { id:'crown',   kind:'gear', lv:3, price:80,  desc:'머리에 쓰면 주운 다이아몬드가 2배가 돼요', descEn:'Wear it to get double diamonds' },
-  { id:'meadow',  kind:'map',  lv:3, name:'초원',      price:0,   desc:'처음 시작한 초록 들판', nameEn:'Meadow', descEn:'The green fields where it all began' },
-  { id:'snow',    kind:'map',  lv:3, name:'얼음 나라 지도', price:100, desc:'눈과 얼음의 새 땅. 한 칸에 다이아몬드가 더 많아요', nameEn:'Ice Land Map', descEn:'A new land of snow and ice. More diamonds per tile' },
-  { id:'desert',  kind:'map',  lv:3, name:'사막 나라 지도', price:120, desc:'모래 언덕과 오아시스의 땅. 다이아몬드가 훨씬 많아요', nameEn:'Desert Land Map', descEn:'Sand dunes and oases. Many more diamonds' },
   { id:'drill',   kind:'item', lv:4, name:'다이아 드릴', price:150, desc:'한 번 팔 때 주변 9칸을 한꺼번에 파요', nameEn:'Diamond Drill', descEn:'Digs all 9 tiles around you at once' },
   { id:'dragon',  kind:'pet',  lv:4, name:'아기 용',  price:200, desc:'날아다니며 땅을 파서 다이아몬드를 찾아 주고, 몬스터에게 불을 뿜어요', nameEn:'Baby Dragon', descEn:'Flies around digging up diamonds and breathes fire at monsters' },
-  { id:'candy',   kind:'map',  lv:4, name:'사탕 나라 지도', price:250, desc:'솜사탕 들판과 사탕 산. 다이아몬드가 가장 많아요', nameEn:'Candy Land Map', descEn:'Cotton candy fields and candy mountains. The most diamonds' },
   { id:'sword_wood',    kind:'gear', lv:5, price:40,  desc:'처음 쓰기 좋은 근거리 무기', descEn:'A good first melee weapon' },
   { id:'armor_leather', kind:'gear', lv:5, price:50,  desc:'몬스터 공격을 조금 막아 줘요', descEn:'Blocks a little monster damage' },
   { id:'boots',         kind:'gear', lv:5, price:60,  desc:'발이 가벼워져요', descEn:'Light on your feet' },
@@ -504,13 +501,14 @@ const CATALOG = [
   { id:'phoenix', kind:'pet',  lv:9, name:'불사조', price:700, desc:'팀 공격력 +3. 쓰러지면 한 번 되살려 줘요 (90초마다)', nameEn:'Phoenix', descEn:'Team attack +3. Brings you back once when you fall (every 90 s)' },
   { id:'trophy',  kind:'item', lv:10, name:'전설의 트로피', price:1000, desc:'진짜 탐험대만 가질 수 있는 트로피. 사면 게임 클리어!', nameEn:'Legendary Trophy', descEn:'Only true explorers can own it. Buying it clears the game!' },
 ].map(c=>c.kind==='gear'?{ ...c, name:GEAR[c.id].name, nameEn:GEAR[c.id].nameEn }:c);
-const SEC_NAME_EN = ['', 'Tools', 'Pet Friends', 'Explorer Gear and New Maps', 'New Land and Baby Dragon', 'Battle Prep', 'Monster Hunting', 'Knight Gear', 'Diamond Gear', 'Legendary Power', 'The Final Treasure'];
-const SEC_NAME_KO = ['', '도구', '펫 친구', '탐험 장비와 새 지도', '새 나라와 아기 용', '전투 준비', '몬스터 사냥', '기사의 장비', '다이아 장비', '전설의 힘', '최후의 보물'];
+const SEC_NAME_EN = ['', 'Tools and Keys', 'Pet Friends', 'Explorer Gear', 'Drill and Baby Dragon', 'Battle Prep', 'Monster Hunting', 'Knight Gear', 'Diamond Gear', 'Legendary Power', 'The Final Treasure'];
+const SEC_NAME_KO = ['', '도구와 열쇠', '펫 친구', '탐험 장비', '드릴과 아기 용', '전투 준비', '몬스터 사냥', '기사의 장비', '다이아 장비', '전설의 힘', '최후의 보물'];
 const LV_NAME_EN = ['', 'Rookie Miner', 'Pet Trainer', 'Expedition Leader', 'New Land Pioneer', 'Warrior in Training', 'Monster Hunter', 'Brave Knight', 'Diamond Hero', 'Legendary Hero', 'Legendary Explorers'];
 const LV_NAME_KO = ['', '초보 광부', '펫 조련사', '탐험 대장', '새 나라 개척자', '전사 훈련생', '몬스터 사냥꾼', '용감한 기사', '다이아 영웅', '전설의 용사', '전설의 탐험대'];
 /* ticket to reach level L+1 costs more than everything sold at level L put together */
 const TICKET_PRICE = 60;
 const SELL_RATE = 0.7;
+const LEVEL_MAP = ['', 'meadow','snow','desert','candy','meadow','snow','desert','candy','meadow','snow'];
 const SEC_NAME = new Proxy([],{ get:(_,k)=>(LANG==='en'?SEC_NAME_EN:SEC_NAME_KO)[k] });
 const LV_NAME = new Proxy([],{ get:(_,k)=>(LANG==='en'?LV_NAME_EN:LV_NAME_KO)[k] });
 function ticketPrice(){ return TICKET_PRICE; }
@@ -652,7 +650,7 @@ function makePlayer(idx, gender){
     dirStack:[], trail:[], radar:null, radarT:0, equip:{head:null,weapon:null,armor:null,feet:null},
     mode:'dig', hp:50, inv:0, dead:0, lastHit:-99, atkCd:0, phoenixT:-999 };
 }
-const newTeam=()=>({ diamonds:0, total:0, holes:0, solved:0, streak:0, kills:0, owned:['hand'], pets:[], items:[], bag:[], potS:0, potL:0, arrows:0, bullets:0 });
+const newTeam=()=>({ diamonds:0, total:0, holes:0, solved:0, streak:0, kills:0, owned:['hand'], pets:[], items:[], bag:[], keys:0, potS:0, potL:0, arrows:0, bullets:0 });
 function placePlayers(){
   G.players.forEach((p,i)=>{ const s=world.starts[i]; Object.assign(p,{tx:s.x,ty:s.y,fx:s.x,fy:s.y,x:s.x,y:s.y,t:1,moving:false,dir:'down',trail:[]}); });
   pets.forEach(pe=>{ pe.x=pe.owner.x-0.6; pe.y=pe.owner.y+0.1; pe.task=null; });
@@ -1032,6 +1030,12 @@ function drawItemIcon(cv,id,extra){
     c.strokeStyle='#6d7680'; c.lineWidth=u*0.6; c.beginPath();
     [[7.5,6],[9.5,6.6],[11.5,7.1],[13.5,7.6]].forEach(([x,y])=>{ c.moveTo(x*u,y*u); c.lineTo((x+1.4)*u,(16-y)*u); }); c.stroke();
     drawSpark(c,14.5*u,4*u,u*2,1,'#9cf4ff'); return;
+  }
+  if(id==='keys'){
+    c.fillStyle='#ffcf3f'; c.beginPath(); c.arc(5*u,8*u,3.6*u,0,Math.PI*2); c.fill();
+    c.fillStyle='#d99a0b'; c.beginPath(); c.arc(5*u,8*u,1.6*u,0,Math.PI*2); c.fill();
+    R(8,7,7,2,'#ffcf3f'); R(12,9,1.4,2.4,'#ffcf3f'); R(14,9,1.2,1.8,'#ffcf3f'); R(8,7,7,.6,'#ffe98a');
+    drawSpark(c,3.4*u,5.6*u,u*1.4,1); return;
   }
   if(id==='vacuum'){
     R(2,7,8,6,'#a072ea'); R(2,7,8,1.2,'#c9a4ff'); R(3,13,2,2,'#333'); R(8,13,2,2,'#333'); R(4,5,4,2,'#7d52c6'); R(5,9,2,2,'#ffcf3f');
@@ -1487,12 +1491,15 @@ function grab(p){
   if(screen!=='game' || otherModal() || !p || quizzes[p.idx] || p.moving || p.dead>0) return;
   const t=tileAt(p.tx,p.ty), ch=chestAt(p.tx,p.ty), dp=dropAt(p.tx,p.ty);
   if(ch && !ch.opened){
-    const n=8*gemMult();
-    openQuiz(p,n,mult=>{
+    if(G.team.keys<=0){ sfx.no(); toast(p,tr('보물상자를 열려면 열쇠가 필요해요. 상점에서 다이아몬드 10개로 사요!','You need a key to open the chest. Buy one at the shop for 10 diamonds!'),'bad'); return; }
+    const gm=gemMult();
+    openQuiz(p,`${5*gm}~${50*gm}`,mult=>{
       if(ch.opened){ toast(p,tr('친구가 먼저 보물상자를 열었어요','Your friend opened this chest first')); return; }
-      ch.opened=true; sfx.chest();
+      if(G.team.keys<=0){ toast(p,tr('열쇠를 다 썼어요. 상점에서 하나 더 사요','No keys left. Buy another at the shop'),'bad'); return; }
+      G.team.keys--; ch.opened=true; sfx.chest();
+      const n=rnd(5,50)*gemMult()*mult;   // every chest holds a random 5–50 diamonds
       burst(p.tx*T+T/2,p.ty*T+T/2,['#ffcf3f','#9cf4ff','#ffffff','#ff6fa8'],40,280,T/12,250);
-      giveGems(n*mult,p.tx,p.ty,'+'+n*mult); toast(p,tr(`보물상자를 열었어요! 다이아몬드 ${n*mult}개!`,`Opened the treasure chest! ${n*mult} diamonds!`),'good');
+      giveGems(n,p.tx,p.ty,'+'+n); toast(p,tr(`열쇠로 보물상자를 열었어요! 다이아몬드 ${n}개!`,`The key opened the chest! ${n} diamonds!`),'good');
     },tr('보물상자 다이아몬드','treasure diamonds'));
     return;
   }
@@ -1567,7 +1574,7 @@ function enterTile(p){
   }
   if(t.type==='mountain' && !G.flags.mt){ G.flags.mt=1; toast(p,tr('산에는 다이아몬드가 더 많이 숨어 있대요!','Mountains hide more diamonds!')); }
   const ch=chestAt(p.tx,p.ty);
-  if(ch && !ch.opened) toast(p,tr(`보물상자다! ${grabKeyName(p)}를 눌러 열어요`,`A treasure chest! Press ${grabKeyName(p)} to open it`),'good');
+  if(ch && !ch.opened) toast(p, G.team.keys>0 ? tr(`보물상자다! 열쇠가 있으니 ${grabKeyName(p)}를 눌러 열어요`,`A treasure chest! You have a key, press ${grabKeyName(p)} to open it`) : tr('보물상자다! 열쇠가 있어야 열 수 있어요 (상점에서 10개)','A treasure chest! You need a key to open it (10 at the shop)'),'good');
   else if(dropAt(p.tx,p.ty)) toast(p,tr(`몬스터가 떨어뜨린 다이아몬드! ${grabKeyName(p)}로 주워요`,`Monster diamonds! Press ${grabKeyName(p)} to pick them up`),'good');
 }
 function maxSpan(){ return { x:CW/ZMIN/T-3, y:CH/ZMIN/T-3 }; }
@@ -1824,8 +1831,8 @@ function buildHUD(){
       <canvas id="hand${p.idx}" width="72" height="72"></canvas><div class="info"><div class="nm" id="hn${p.idx}"></div>
       <div class="hp"><i id="hpb${p.idx}"></i><span id="hpt${p.idx}"></span></div></div></div>`).join('')}</div>`;
   const belt=$('belt');
-  belt.innerHTML=['potS','potL','arrows','bullets'].map(id=>`<div class="belt-i" id="bi-${id}" title="${CATALOG.find(c=>c.id===id).name}"><canvas width="48" height="48"></canvas><span></span></div>`).join('');
-  ['potS','potL','arrows','bullets'].forEach(id=>drawItemIcon($('bi-'+id).querySelector('canvas'),id));
+  belt.innerHTML=['keys','potS','potL','arrows','bullets'].map(id=>`<div class="belt-i" id="bi-${id}" title="${CATALOG.find(c=>c.id===id).name}"><canvas width="48" height="48"></canvas><span></span></div>`).join('');
+  ['keys','potS','potL','arrows','bullets'].forEach(id=>drawItemIcon($('bi-'+id).querySelector('canvas'),id));
 }
 function updateHUD(){
   if(!G || screen!=='game') return;
@@ -1833,8 +1840,8 @@ function updateHUD(){
   $('cnt0').textContent=tm.diamonds;
   $('lv0').textContent='Lv.'+L;
   $('lvn0').textContent=LV_NAME[L];
-  $('belt').hidden = L<5 && !tm.potS && !tm.potL && !tm.arrows && !tm.bullets;
-  ['potS','potL','arrows','bullets'].forEach(id=>{ const el=$('bi-'+id); el.querySelector('span').textContent=tm[id]; el.classList.toggle('zero',!tm[id]); });
+  $('belt').hidden = L<5 && !tm.keys && !tm.potS && !tm.potL && !tm.arrows && !tm.bullets;
+  ['keys','potS','potL','arrows','bullets'].forEach(id=>{ const el=$('bi-'+id); el.querySelector('span').textContent=tm[id]; el.classList.toggle('zero',!tm[id]); });
   G.players.forEach(p=>{
     const s=stats(p), fight=p.mode==='fight', w=weaponOf(p);
     drawItemIcon($('hand'+p.idx), fight ? (p.equip.weapon?p.equip.weapon.id:'hand') : tool.id);
@@ -1889,7 +1896,7 @@ function renderInv(){
   const s=stats(p), w=weaponOf(p);
   $('pstats').innerHTML=`<span>${tr('공격력','Attack')}</span><b>${w.dmg+s.atk}${w.atk!=='melee'?tr(' (원거리)',' (ranged)'):''}</b><span>${tr('방어력','Defense')}</span><b>${s.def}</b>
     <span>${tr('이동 속도','Speed')}</span><b>${Math.round(s.spd*100)}%</b><span>HP</span><b>${Math.ceil(p.hp)} / ${s.maxHp}</b>`;
-  $('beltbox').innerHTML=['potS','potL','arrows','bullets'].map(id=>`<div class="belt-i"><canvas width="48" height="48" data-id="${id}"></canvas><span>${G.team[id]}</span></div>`).join('');
+  $('beltbox').innerHTML=['keys','potS','potL','arrows','bullets'].map(id=>`<div class="belt-i"><canvas width="48" height="48" data-id="${id}"></canvas><span>${G.team[id]}</span></div>`).join('');
   $('beltbox').querySelectorAll('canvas').forEach(c=>drawItemIcon(c,c.dataset.id));
   const gh=$('ghost'); gh.hidden=!held; gh.innerHTML='';
   if(held){ const g=GEAR[held.it.id]; gh.style.width=g.w*C+'px'; gh.style.height=g.h*C+'px'; gh.append(gearCanvas(held.it.id)); }
@@ -2029,7 +2036,6 @@ function sellItem(id){
   if(it.kind==='tool') tm.owned=tm.owned.filter(x=>x!==id);
   else if(it.kind==='pet'){ tm.pets=tm.pets.filter(x=>x!==id); rebuildPets(); }
   else if(it.kind==='item') tm.items=tm.items.filter(x=>x!==id);
-  else if(it.kind==='map'){ G.ownedMaps=G.ownedMaps.filter(x=>x!==id); delete G.maps[id]; }
   else if(it.kind==='consume'){ for(const k in it.add) tm[k]-=it.add[k]; }
   else if(it.kind==='gear'){ const b=tm.bag.find(o=>o.id===id); tm.bag=tm.bag.filter(o=>o!==b); }
   tm.diamonds+=n; sfx.buy(); bumpHud();
@@ -2038,9 +2044,9 @@ function sellItem(id){
   updateHUD(); renderShop(); save();
 }
 function ticketItem(L){
-  const next=L+1, names=CATALOG.filter(c=>c.lv===next).map(c=>c.name).slice(0,4).join(', ');
+  const next=L+1, names=CATALOG.filter(c=>c.lv===next).map(c=>c.name).slice(0,4).join(', '), land=THEMES[LEVEL_MAP[next]].name;
   return { id:'ticket', kind:'ticket', lv:L, toLv:next, name:tr(`Lv.${next} 레벨 티켓`,`Lv.${next} Level Ticket`), price:ticketPrice(L),
-    desc:tr(`다음 레벨로 가요! Lv.${next}에서 ${names} 등을 살 수 있어요.${next===6?' 조심해요, Lv.6부터 몬스터가 나타나요!':''}`,`On to the next level! At Lv.${next} you can buy ${names} and more.${next===6?' Careful, monsters appear from Lv.6!':''}`) };
+    desc:tr(`새로운 ${land}로 떠나요! Lv.${next}에서 ${names} 등을 살 수 있어요.${next===6?' 조심해요, Lv.6부터 몬스터가 나타나요!':''}`,`Off to a brand-new ${land}! At Lv.${next} you can buy ${names} and more.${next===6?' Careful, monsters appear from Lv.6!':''}`) };
 }
 function renderShop(){
   const L=G.level, tm=G.team;
@@ -2052,7 +2058,6 @@ function renderShop(){
     const sec=document.createElement('div'); sec.className='sec'+(locked?' locked':'')+(old?' old':'');
     sec.innerHTML=`<h3>Lv.${lv} ${SEC_NAME[lv]}${locked?tr(' <em>· 레벨 티켓을 사면 열려요</em>',' <em>· Opens with a level ticket</em>'):''}${old?tr(' <em>· 지난 레벨</em>',' <em>· Earlier level</em>'):''}${lv===L?tr(' <em>· 지금 레벨</em>',' <em>· Current level</em>'):''}</h3>`;
     for(const it of CATALOG.filter(c=>c.lv===lv)){
-      if(it.id==='meadow' && G.ownedMaps.length<2) continue;
       sec.append(shopRow(it,locked));
     }
     if(lv===L && L<MAX_LV) sec.append(shopRow(ticketItem(L),false));
@@ -2065,7 +2070,6 @@ function act(id){
   const it=id==='ticket' ? ticketItem(L) : CATALOG.find(c=>c.id===id), row=$('item-'+id);
   if(!it) return;
   if(it.lv>L){ sfx.no(); toast(null,tr('레벨 티켓을 사면 열려요','Opens with a level ticket'),'bad'); return; }
-  if(it.kind==='map' && isOwned(it)){ if(G.mapId!==id) travel(id); return; }
   if(isOwned(it)){ toast(null,tr(`${it.name}은(는) 이미 있어요!`,`You already have ${it.name}!`)); return; }
   if(tm.diamonds<it.price){
     sfx.no(); if(row){ row.classList.remove('shake'); void row.offsetWidth; row.classList.add('shake'); }
@@ -2084,12 +2088,11 @@ function act(id){
     if(it.kind==='tool') tm.owned.push(id);
     else if(it.kind==='pet'){ tm.pets.push(id); rebuildPets(); }
     else if(it.kind==='item') tm.items.push(id);
-    else if(it.kind==='map') G.ownedMaps.push(id);
     else if(it.kind==='consume') for(const k in it.add) tm[k]+=it.add[k];
     else if(it.kind==='ticket'){ G.level++; }
     msg = it.kind==='tool' ? tr(`${it.name}을(를) 샀어요! 이제 ${it.hits===1?'한 번에':it.hits+'번이면'} 땅을 팔 수 있어요`,`Bought the ${it.name}! Now it takes ${it.hits===1?'just one hit':it.hits+' hits'} to dig`)
       : it.kind==='pet' ? tr(`${it.name}가 친구가 되었어요! ${it.desc}`,`The ${it.name} is your friend now! ${it.desc}`)
-      : it.kind==='map' ? tr(`${it.name}를 샀어요! 출발!`,`Bought the ${it.name}! Let's go!`) : it.kind==='ticket' ? tr('레벨 업!','Level up!') : tr(`${it.name}을(를) 샀어요!`,`Bought ${it.name}!`);
+      : it.kind==='ticket' ? tr('레벨 업!','Level up!') : tr(`${it.name}을(를) 샀어요!`,`Bought ${it.name}!`);
   }
   sfx.buy(); bumpHud();
   const p0=G.players[0];
@@ -2097,14 +2100,17 @@ function act(id){
   G.players.forEach(clampHp);
   updateHUD(); renderShop(); save();
   toast(null,msg,'good');
-  if(it.kind==='map'){ setTimeout(()=>travel(id),500); return; }
-  if(it.kind==='ticket'){ G.players.forEach(p=>p.hp=stats(p).maxHp); if(G.level>=6) spawnMonsters(); setTimeout(()=>levelUp(G.level),400); }
+  if(it.kind==='ticket'){
+    const land=LEVEL_MAP[G.level];
+    if(!G.ownedMaps.includes(land)) G.ownedMaps.push(land);
+    setTimeout(()=>{ travel(land,true); G.players.forEach(p=>p.hp=stats(p).maxHp); setTimeout(()=>levelUp(G.level),700); },400);
+  }
   if(id==='trophy') setTimeout(()=>levelUp('clear'),500);
 }
 const LEVEL_EN={
-  2:'Now you can buy pet friends at the shop. The puppy, kitty and cheetah each have a different power.',
-  3:'Now you can buy the diamond radar, the diamond vacuum, the golden crown and maps to new lands.',
-  4:'Now you can buy the diamond drill, the baby dragon and the Candy Land map.',
+  2:'Welcome to the Ice Land! Now you can buy pet friends at the shop. The puppy, kitty and cheetah each have a different power.',
+  3:'Welcome to the Desert Land! Now you can buy the diamond radar, the diamond vacuum and the golden crown.',
+  4:'Welcome to the Candy Land! Now you can buy the diamond drill and the baby dragon.',
   5:'Monsters are coming soon! Get ready with swords, armor, shoes, a bow and potions. Q switches between digging and fighting.',
   6:'Monsters are here! Watch out for goblins, skeleton archers and slimes in the mountains and water. Defeat them and they drop diamonds.',
   7:'More monsters, and water spirits appear too. You can buy a helmet, lightning boots and a turtle.',
@@ -2114,9 +2120,9 @@ const LEVEL_EN={
   clear:'You got the legendary trophy! You finished every adventure and became true explorers. Keep exploring, defeat monsters and collect more diamonds.',
 };
 const LEVEL_TEXT={
-  2:['이제 상점에서 펫 친구를 살 수 있어요. 강아지, 고양이, 치타는 저마다 다른 능력이 있어요.',['dog','cat','cheetah']],
-  3:['다이아 레이더, 다이아 청소기, 황금 왕관, 새로운 나라 지도를 살 수 있어요.',['radar','vacuum','crown']],
-  4:['다이아 드릴, 아기 용, 사탕 나라 지도를 살 수 있어요.',['drill','dragon','candy']],
+  2:['얼음 나라에 왔어요! 이제 상점에서 펫 친구를 살 수 있어요. 강아지, 고양이, 치타는 저마다 다른 능력이 있어요.',['dog','cat','cheetah']],
+  3:['사막 나라에 왔어요! 다이아 레이더, 다이아 청소기, 황금 왕관을 살 수 있어요.',['radar','vacuum','crown']],
+  4:['사탕 나라에 왔어요! 다이아 드릴과 아기 용을 살 수 있어요.',['drill','dragon','candy']],
   5:['곧 몬스터가 나타나요! 검, 갑옷, 신발, 활과 물약으로 싸울 준비를 해요. Q로 파기와 싸우기를 바꿔요.',['sword_wood','bow','potS']],
   6:['몬스터가 나타났어요! 산과 물에 사는 고블린, 해골 궁수, 슬라임을 조심해요. 물리치면 다이아몬드를 떨어뜨려요.',['goblin','archer','slime']],
   7:['몬스터가 더 많아지고 물의 정령도 나타나요. 투구, 번개 신발, 거북이를 살 수 있어요.',['spirit','boots_bolt','turtle']],
@@ -2136,8 +2142,9 @@ function levelUp(L){
   $('modal').hidden=false; (clear?sfx.win:sfx.level)(); $('mClose').focus();
   for(const p of G.players) burst(p.x*T+T/2,p.y*T,['#ffcf3f','#ff6fa8','#5ee7ff','#63e39a','#a072ea','#ffffff'],clear?80:40,clear?380:300,T/10,300);
 }
-function travel(id){
+function travel(id,fresh=false){
   stashMap();
+  if(fresh) delete G.maps[id];   // a brand-new land: new diamonds, closed chests
   G.mapId=id; loadMap(); placePlayers();
   particles=[]; floats=[]; flyers=[];
   closeShop(); snapCam();
@@ -2171,7 +2178,7 @@ function startNew(mode,genders){
   particles=[]; floats=[]; flyers=[];
   showGame(); save();
   toast(null,isTouch&&mode===1?tr('파기 버튼을 10번 눌러 땅을 파 봐요!','Press the Dig button 10 times to dig!'):tr('파기 키를 10번 눌러 땅을 파 봐요!','Press the dig key 10 times to dig!'));
-  setTimeout(()=>{ if(screen==='game' && world.chests.some(c=>!c.opened)) toast(null,tr('다이아몬드를 주울 때는 수학 문제를 풀어요. 호수 속 보물상자도 찾아봐요!','Solve a math problem to pick up diamonds. Look for the treasure chests in the lakes too!')); },6000);
+  setTimeout(()=>{ if(screen==='game' && world.chests.some(c=>!c.opened)) toast(null,tr('다이아몬드를 주울 때는 수학 문제를 풀어요. 상점에서 열쇠를 사면 호수 속 보물상자도 열 수 있어요!','Solve a math problem to pick up diamonds. Buy a key at the shop to open the treasure chests in the lakes!')); },6000);
 }
 function continueGame(given){
   ac();
@@ -2180,7 +2187,7 @@ function continueGame(given){
   const arr=k=>Array.isArray(d.team[k])?d.team[k]:[];
   const tm={ ...newTeam(), ...d.team, owned:arr('owned').length?arr('owned'):['hand'], pets:arr('pets'), items:arr('items'),
     bag:arr('bag').filter(it=>GEAR[it.id]) };
-  ['potS','potL','arrows','bullets','solved','streak','kills','holes','diamonds','total'].forEach(k=>tm[k]=tm[k]|0);
+  ['keys','potS','potL','arrows','bullets','solved','streak','kills','holes','diamonds','total'].forEach(k=>tm[k]=tm[k]|0);
   uidSeq=1+Math.max(0,...tm.bag.map(i=>i.uid|0));
   G={ mode:d.players.length>1?2:1, level:Math.min(MAX_LV,Math.max(1,d.level|0)), mapId:d.mapId, maps:d.maps,
     ownedMaps:Array.isArray(d.ownedMaps)?d.ownedMaps:['meadow'], flags:d.flags||{}, team:tm,
