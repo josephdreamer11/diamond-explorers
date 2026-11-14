@@ -216,6 +216,8 @@ body.two .qpanel.p1 .card{box-shadow:0 10px 0 rgba(0,0,0,.25),inset 0 0 0 3px va
 .q-title{font-family:var(--display);font-size:20px;color:var(--gem);display:flex;justify-content:center;align-items:center;gap:8px}
 .q-title svg{width:26px;height:26px}
 .q-prob{font-family:var(--display);font-size:clamp(34px,6.5vw,60px);margin:12px 0 6px;font-variant-numeric:tabular-nums;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
+.q-diff{min-height:24px}
+.diff-badge{display:inline-block;font-family:var(--display);font-size:15px;padding:2px 12px;border-radius:10px;background:#ff9f43;color:#3a1a00}
 .q-msg{min-height:28px;font-family:var(--display);font-size:19px}
 .q-msg.good{color:var(--ok)} .q-msg.bad{color:var(--red)}
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
@@ -689,7 +691,7 @@ function genWorld(seed, themeId){
 function makePlayer(idx, gender){
   return { idx, gender, tx:0,ty:0,fx:0,fy:0,x:0,y:0,t:1,moving:false,dir:'down',anim:0,swing:0,
     dirStack:[], trail:[], radar:null, radarT:0, equip:{head:null,weapon:null,armor:null,feet:null},
-    mode:'dig', hp:50, inv:0, dead:0, lastHit:-99, atkCd:0, phoenixT:-999 };
+    mode:'dig', pend:{n:null,h:null}, hp:50, inv:0, dead:0, lastHit:-99, atkCd:0, phoenixT:-999 };
 }
 const newTeam=()=>({ diamonds:0, total:0, holes:0, solved:0, streak:0, kills:0, owned:['hand'], pets:[], items:[], bag:[], keys:0, potS:0, potL:0, arrows:0, bullets:0 });
 function placePlayers(){
@@ -1361,24 +1363,28 @@ function makeProblem(){
     if(Math.random()<0.4){ a=rnd(10,89); b=rnd(2,9); }
     else { a=rnd(10,79); b=rnd(10,Math.max(10,99-a)); }
     if(a+b>99) b=99-a;
-    return { text:`${a} + ${b}`, ans:a+b };
+    // two-digit addition with carrying is worth an extra diamond
+    return { text:`${a} + ${b}`, ans:a+b, bonus: b>=10 && a%10+b%10>=10 ? 1 : 0 };
   }
   if(r<0.68){
     const a=rnd(20,99), b=Math.random()<0.4?rnd(2,9):rnd(10,a-1);
-    return { text:`${a} − ${b}`, ans:a-b };
+    return { text:`${a} − ${b}`, ans:a-b, bonus: b>=10 && a%10<b%10 ? 1 : 0 };   // borrowing
   }
   const a=Math.random()<0.8?rnd(2,9):rnd(1,10), b=rnd(1,10);
-  return { text:`${a} × ${b}`, ans:a*b };
+  return { text:`${a} × ${b}`, ans:a*b, bonus: (a>=7&&b>=3)||(b>=7&&a>=3) ? 1 : 0 };   // 7, 8, 9 times tables
 }
 function makeHardProblem(){
   const r=Math.random();
-  if(r<0.4){ const a=rnd(100,899), b=rnd(100,899); return { text:`${a} + ${b}`, ans:a+b }; }
-  if(r<0.8){ const a=rnd(200,999), b=rnd(100,a-1); return { text:`${a} − ${b}`, ans:a-b }; }
-  const a=rnd(12,49), b=rnd(3,9); return { text:`${a} × ${b}`, ans:a*b };
+  if(r<0.4){ const a=rnd(100,899), b=rnd(100,899); return { text:`${a} + ${b}`, ans:a+b, bonus:2 }; }
+  if(r<0.8){ const a=rnd(200,999), b=rnd(100,a-1); return { text:`${a} − ${b}`, ans:a-b, bonus:2 }; }
+  const a=rnd(12,49), b=rnd(3,9); return { text:`${a} × ${b}`, ans:a*b, bonus:2 };
 }
 function openQuiz(p,n,onOK,what,hard=false){
   dropHeld(); p.dirStack=[]; p.moving=false;
-  quizzes[p.idx]={ p, n, onOK, what, hard, prob:hard?makeHardProblem():makeProblem(), busy:false, val:'', t0:performance.now() };
+  // a problem the player closed comes back on their next pickup, with its speed-bonus clock still running
+  const kind=hard?'h':'n', back=!!p.pend[kind];
+  const ent=p.pend[kind] || (p.pend[kind]={ prob:hard?makeHardProblem():makeProblem(), t0:performance.now() });
+  quizzes[p.idx]={ p, n, onOK, what, hard, kind, ent, back, prob:ent.prob, busy:false, val:'', t0:ent.t0 };
   buildQuiz(p.idx); syncKb();
 }
 function buildQuiz(i){
@@ -1392,20 +1398,28 @@ function buildQuiz(i){
     <div class="q-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#2fc8ec"/><path d="M6 3h12l4 6H2z" fill="#9cf4ff"/></svg><span>${title}</span></div>
     <div class="q-timer"><i></i></div><div class="q-timer-txt"></div>
     <div class="q-prob"><span class="qtext"></span><span>=</span><span class="qans" aria-label="${tr('정답','Answer')}"></span></div>
+    <div class="q-diff"></div>
     <div class="q-msg"></div>
     <div class="pad">${[1,2,3,4,5,6,7,8,9].map(d=>`<button data-d="${d}">${d}</button>`).join('')}<button data-k="del">${tr('지우기','Delete')}</button><button data-d="0">0</button><button class="ok" data-k="ok">${tr('확인','OK')}</button></div>
     <div class="q-input"></div>
     <div class="streak"></div>
-    <button class="link-btn" data-k="later">${tr('나중에 줍기 (Esc)','Pick up later (Esc)')}</button></div>`;
+    <button class="link-btn" data-k="later"></button></div>`;
   el.hidden=false;
   showProblem(i);
 }
 function showProblem(i){
   const q=quizzes[i], el=$('quiz'+i);
-  q.val=''; q.t0=performance.now();
+  q.val='';
   el.querySelector('.qtext').textContent=q.prob.text;
   el.querySelector('.qans').textContent='';
   const m=el.querySelector('.q-msg'); m.textContent=''; m.className='q-msg';
+  if(q.back){ m.className='q-msg bad'; m.textContent=tr('아까 닫은 문제예요. 이 문제를 풀어야 다음 문제로 넘어가요!','This is the problem you closed. Solve it to move on!'); q.back=false; }
+  const dx=q.prob.bonus||0, df=el.querySelector('.q-diff');
+  df.innerHTML = dx ? `<span class="diff-badge">${tr(`어려운 문제! 다이아몬드 +${dx}`,`Tough one! +${dx} diamonds`)}</span>` : '';
+  const st=G.team.streak;
+  el.querySelector('[data-k="later"]').textContent = st>0
+    ? tr(`나중에 줍기 (Esc) · 지금 닫으면 연속 정답 ${st}개가 사라져요`,`Pick up later (Esc) · closing now loses your ${st}-answer streak`)
+    : tr('나중에 줍기 (Esc)','Pick up later (Esc)');
   const s=G.team.streak%5;
   const dots=`<span>${[0,1,2,3,4].map(k=>`<i class="${k<s?'on':''}"></i>`).join('')}</span>`;
   el.querySelector('.streak').innerHTML=tr(`연속 정답 ${dots} 5번 연속이면 보너스!`,`Streak ${dots} 5 in a row earns a bonus!`);
@@ -1451,8 +1465,11 @@ function submitQuiz(i){
     sfx.right(); msg.className='q-msg good';
     msg.textContent = quick ? tr('정답! 빨리 풀어서 다이아몬드 2배!','Correct! Fast answer: double diamonds!') : tr('정답이에요! 최고!','Correct! Awesome!');
     const bonus = tm.streak%5===0 ? Math.max(3,Math.round(3*world.th.rich)) : 0;
+    q.p.pend[q.kind]=null;
     setTimeout(()=>{
-      closeQuiz(i); q.onOK(mult);
+      closeQuiz(i); const ok=q.onOK(mult)!==false;
+      const dx=q.prob.bonus||0;
+      if(ok && dx){ const extra=dx*gemMult()*mult; giveGems(extra,q.p.x,q.p.y-0.3,tr(`어려운 문제 +${extra}`,`Tough one +${extra}`)); }
       if(quick) floatText(q.p.x*T+T/2,q.p.y*T-T*0.6,tr('빠른 정답 ×2!','Speed bonus ×2!'),'#ffcf3f',0.45);
       if(bonus){ giveGems(bonus,q.p.x,q.p.y-0.6,tr(`보너스 +${bonus}`,`Bonus +${bonus}`)); toast(q.p,tr(`5문제 연속 정답! 보너스 다이아몬드 ${bonus}개!`,`5 in a row! ${bonus} bonus diamonds!`),'good'); }
       save();
@@ -1461,10 +1478,12 @@ function submitQuiz(i){
     q.busy=true; tm.streak=0;
     sfx.wrong(); const card=el.querySelector('.card'); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
     msg.textContent=tr(`아쉬워요! ${q.prob.text} = ${q.prob.ans} 이에요. 새 문제!`,`Not quite! ${q.prob.text} = ${q.prob.ans}. Here is a new one!`); msg.className='q-msg bad';
-    setTimeout(()=>{ if(quizzes[i]!==q) return; q.prob=q.hard?makeHardProblem():makeProblem(); q.busy=false; showProblem(i); },1600);
+    q.ent.prob=q.hard?makeHardProblem():makeProblem();   // the speed-bonus clock keeps running, so a wrong answer never buys a fresh 7 seconds
+    setTimeout(()=>{ if(quizzes[i]!==q) return; q.prob=q.ent.prob; q.busy=false; showProblem(i); },1600);
   }
 }
-function closeQuiz(i){
+function closeQuiz(i,byPlayer=false){
+  if(byPlayer && quizzes[i] && G.team.streak>0){ toast(quizzes[i].p,tr(`연속 정답 ${G.team.streak}개가 끊겼어요`,`Your ${G.team.streak}-answer streak is broken`),'bad'); G.team.streak=0; }
   quizzes[i]=null; const el=$('quiz'+i); el.hidden=true; el.innerHTML='';
   syncKb(); if(!anyQuiz()) cvs.focus();
 }
@@ -1473,7 +1492,7 @@ function closeAllQuizzes(){ [0,1].forEach(i=>{ quizzes[i]=null; $('quiz'+i).hidd
   $('quiz'+i).addEventListener('click',e=>{
     if(!quizzes[i]) return;
     const b=e.target.closest('button');
-    if(b && b.dataset.k==='later'){ closeQuiz(i); return; }
+    if(b && b.dataset.k==='later'){ closeQuiz(i,true); return; }
     if(!b) return;
     quizInput(i, b.dataset.d!==undefined ? b.dataset.d : b.dataset.k);
   });
@@ -1535,8 +1554,8 @@ function grab(p){
     if(G.team.keys<=0){ sfx.no(); toast(p,tr('보물상자를 열려면 열쇠가 필요해요. 상점에서 다이아몬드 10개로 사요!','You need a key to open the chest. Buy one at the shop for 10 diamonds!'),'bad'); return; }
     const gm=gemMult();
     openQuiz(p,`${5*gm}~${50*gm}`,mult=>{
-      if(ch.opened){ toast(p,tr('친구가 먼저 보물상자를 열었어요','Your friend opened this chest first')); return; }
-      if(G.team.keys<=0){ toast(p,tr('열쇠를 다 썼어요. 상점에서 하나 더 사요','No keys left. Buy another at the shop'),'bad'); return; }
+      if(ch.opened){ toast(p,tr('친구가 먼저 보물상자를 열었어요','Your friend opened this chest first')); return false; }
+      if(G.team.keys<=0){ toast(p,tr('열쇠를 다 썼어요. 상점에서 하나 더 사요','No keys left. Buy another at the shop'),'bad'); return false; }
       G.team.keys--; ch.opened=true; sfx.chest();
       const n=rnd(5,50)*gemMult()*mult;   // every chest holds a random 5–50 diamonds
       burst(p.tx*T+T/2,p.ty*T+T/2,['#ffcf3f','#9cf4ff','#ffffff','#ff6fa8'],40,280,T/12,250);
@@ -1563,7 +1582,7 @@ function grab(p){
           burst(sp.x*T+T/2,sp.y*T+T/2,['#9cf4ff','#ffffff','#ff9be3'],10,120,T/16,-80);
         }
         const gain=got*gemMult()*mult;
-        if(!gain){ toast(p,tr('친구가 먼저 주웠어요','Your friend picked them up first')); return; }
+        if(!gain){ toast(p,tr('친구가 먼저 주웠어요','Your friend picked them up first')); return false; }
         sfx.chest(); G.team.diamonds+=gain; G.team.total+=gain;
         floatText(p.x*T+T/2,p.y*T,'+'+gain,'#9cf4ff'); updateHUD();
         toast(p,tr(`청소기로 다이아몬드 ${gain}개를 빨아들였어요!`,`The vacuum sucked up ${gain} diamonds!`),'good');
@@ -1573,14 +1592,14 @@ function grab(p){
   }
   if(dp){
     openQuiz(p,dp.n*gemMult(),mult=>{
-      if(!world.drops.includes(dp)){ toast(p,tr('친구가 먼저 주웠어요','Your friend picked them up first')); return; }
+      if(!world.drops.includes(dp)){ toast(p,tr('친구가 먼저 주웠어요','Your friend picked them up first')); return false; }
       const n=dp.n*gemMult()*mult; world.drops=world.drops.filter(x=>x!==dp); sfx.grab(); giveGems(n,p.tx,p.ty);
     },tr('몬스터가 떨어뜨린 다이아몬드','monster diamonds'));
     return;
   }
   if(t.dug && t.d>0){
     openQuiz(p,t.d*gemMult(),mult=>{
-      if(t.d<=0){ toast(p,tr('친구가 먼저 주웠어요','Your friend picked them up first')); return; }
+      if(t.d<=0){ toast(p,tr('친구가 먼저 주웠어요','Your friend picked them up first')); return false; }
       const n=t.d*gemMult()*mult; t.d=0; sfx.grab(); giveGems(n,p.tx,p.ty);
     },tr('다이아몬드','diamonds'));
     return;
@@ -2681,7 +2700,7 @@ window.addEventListener('keydown',e=>{
     if(dg){ e.preventDefault(); quizInput(kbOwner,dg[1]); return; }
     if(code==='Backspace'){ e.preventDefault(); quizInput(kbOwner,'del'); return; }
     if((code==='Enter'||code==='NumpadEnter') && G.mode===1){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
-    if(code==='Escape'){ e.preventDefault(); if(quizzes[kbOwner]) closeQuiz(kbOwner); return; }
+    if(code==='Escape'){ e.preventDefault(); if(quizzes[kbOwner]) closeQuiz(kbOwner,true); return; }
     if(G.mode===1){ if(code==='Space'){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); } else if(/^Arrow|^Shift/.test(code)) e.preventDefault(); return; }
     // the solver confirms with their own action key (1P Space, 2P Enter); the other key stays with the free player
     const isEnter=code==='Enter'||code==='NumpadEnter';
