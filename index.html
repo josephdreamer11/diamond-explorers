@@ -161,6 +161,26 @@ h2{font-family:var(--display);font-weight:400;font-size:24px;margin:20px 0 12px}
 .lang-opt{font-size:14px;border:2px solid var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:4px 10px}
 .lang-opt.on{background:var(--gold);color:#4a2c00;border-color:transparent}
 .lang-mini{font-family:var(--display);font-size:15px;color:#fff}
+#board .card{width:min(640px,100%);max-height:calc(100% - 8px);display:flex;flex-direction:column;padding:20px;text-align:left}
+.board-tabs{margin:8px 0 4px;flex-wrap:wrap}
+.board-tabs button.on{background:var(--gold);color:#4a2c00;border-color:transparent}
+.board-note{margin:6px 0;color:var(--muted);font-size:14px;min-height:20px}
+.board-note.warn{color:#ffc4c4}
+.board-list{list-style:none;padding:0;margin:0;display:grid;gap:6px;overflow:auto;min-height:0}
+.board-list li{display:grid;grid-template-columns:2.2em 1fr auto;gap:10px;align-items:center;background:var(--ink-2);border:2px solid var(--line);border-radius:12px;padding:8px 12px}
+.board-list li.me{border-color:var(--gold)}
+.board-list .rk{font-family:var(--display);font-size:20px;text-align:center;color:var(--muted)}
+.board-list li:nth-child(1) .rk{color:#ffcf3f}.board-list li:nth-child(2) .rk{color:#dfe5ec}.board-list li:nth-child(3) .rk{color:#e0a36a}
+.board-list .nm{font-family:var(--display);font-size:18px;min-width:0;overflow-wrap:anywhere}
+.board-list .nm small{display:block;font-family:var(--body);font-size:12px;color:var(--muted)}
+.board-list .sc{font-family:var(--display);font-size:22px;color:var(--gem);text-align:right;font-variant-numeric:tabular-nums}
+.board-list .sc small{display:block;font-family:var(--body);font-size:11px;color:var(--muted)}
+.board-list .del{font-size:12px;border:1px solid #ff9a9a;color:#ffc4c4;background:transparent;border-radius:8px;padding:2px 6px;margin-left:6px}
+.board-foot{font-size:12px;color:var(--muted);margin:10px 0 0}
+.post-box{display:grid;gap:8px;background:rgba(255,207,63,.08);border:2px dashed rgba(255,207,63,.5);border-radius:14px;padding:12px;margin-bottom:6px}
+.post-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.post-row input{flex:1;min-width:140px;font-family:var(--display);font-size:18px;border-radius:10px;border:2px solid var(--line);background:#fff;color:var(--ink);padding:6px 10px}
+.post-stats{font-size:13px;color:var(--muted)}
 .title-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .item.shake,.card.shake{animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -287,6 +307,9 @@ body.two .qpanel.p1 .card{box-shadow:0 10px 0 rgba(0,0,0,.25),inset 0 0 0 3px va
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-2 11H5z" fill="#8a4b10"/><path d="M2 5h20v4H2z" fill="#d94c3d"/><path d="M6 5h3v4H6zM12 5h3v4h-3zM18 5h3v4h-3z" fill="#fff"/><path d="M10 13h4v7h-4z" fill="#ffe08a"/></svg>
         <span data-en="Shop">상점</span>
       </button>
+      <button class="icon-btn" id="boardBtn" aria-label="점수판" title="점수판" data-en-aria="Scoreboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v5a5 5 0 01-10 0z" fill="#ffcf3f"/><path d="M7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3" fill="none" stroke="#ffcf3f" stroke-width="2"/><path d="M10 14h4v3h-4zM8 18h8v2H8z" fill="#ffcf3f"/></svg>
+      </button>
       <button class="icon-btn lang-mini" id="langBtn" aria-label="Language / 언어">EN</button>
       <button class="icon-btn" id="soundBtn" aria-label="소리 끄기/켜기" data-en-aria="Sound on/off">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path id="sndOn" d="M3 9h4l5-4v14l-5-4H3zM15 8a5 5 0 010 8M17.5 5.5a9 9 0 010 13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path id="sndOff" hidden d="M3 9h4l5-4v14l-5-4H3zM16 9l6 6M22 9l-6 6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -330,6 +353,7 @@ body.two .qpanel.p1 .card{box-shadow:0 10px 0 rgba(0,0,0,.25),inset 0 0 0 3px va
       <div class="title-btns">
         <button class="big-btn" id="continueBtn" hidden>이어서 하기</button>
         <button class="big-btn" id="loadBtn" style="background:#5ee7ff;color:#063a4f;box-shadow:0 5px 0 #1e9fd0" data-en="Load">불러오기</button>
+        <button class="big-btn" id="titleBoardBtn" style="background:#ffcf3f;color:#4a2c00;box-shadow:0 5px 0 #d99a0b" data-en="Scoreboard">점수판</button>
       </div>
       <div id="stepMode">
         <h2 data-en="How many players?">몇 명이 할까요?</h2>
@@ -417,6 +441,23 @@ body.two .qpanel.p1 .card{box-shadow:0 10px 0 rgba(0,0,0,.25),inset 0 0 0 3px va
     </div>
   </div>
 
+  <!-- Scoreboard (claude.ai shared database) -->
+  <div id="board" class="overlay" hidden>
+    <div class="card" role="dialog" aria-label="점수판" data-en-aria="Scoreboard">
+      <div class="shop-head">
+        <h2 data-en="Scoreboard">점수판</h2>
+        <button class="icon-btn" id="boardClose" aria-label="닫기" data-en-aria="Close" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+      </div>
+      <div id="boardPost"></div>
+      <div class="tabs board-tabs" id="boardTabs">
+        <button data-sort="score" data-en="Total score">종합 점수</button><button data-sort="solved" data-en="Problems solved">맞힌 문제</button><button data-sort="total" data-en="Diamonds found">찾은 다이아몬드</button>
+      </div>
+      <p class="board-note" id="boardNote"></p>
+      <ol class="board-list" id="boardList"></ol>
+      <p class="board-foot" data-en="Total score = level × 100 + problems solved × 10 + diamonds found + monsters defeated × 5">종합 점수 = 레벨 × 100 + 맞힌 문제 × 10 + 찾은 다이아몬드 + 물리친 몬스터 × 5</p>
+    </div>
+  </div>
+
   <!-- Level up -->
   <div id="modal" class="overlay" hidden>
     <div class="card">
@@ -424,7 +465,7 @@ body.two .qpanel.p1 .card{box-shadow:0 10px 0 rgba(0,0,0,.25),inset 0 0 0 3px va
       <h1 id="mTitle">레벨 업!</h1>
       <p class="lead" id="mText"></p>
       <div class="stats" id="mStats"></div>
-      <button class="big-btn" id="mClose" data-en="Keep exploring">계속 탐험하기</button>
+      <div class="title-btns"><button class="big-btn" id="mClose" data-en="Keep exploring">계속 탐험하기</button><button class="big-btn" id="mBoard" style="background:#ffcf3f;color:#4a2c00;box-shadow:0 5px 0 #d99a0b" data-en="Post to scoreboard">점수판에 올리기</button></div>
     </div>
   </div>
 </div>
@@ -1439,7 +1480,7 @@ function closeAllQuizzes(){ [0,1].forEach(i=>{ quizzes[i]=null; $('quiz'+i).hidd
 });
 
 /* ---------- actions ---------- */
-function otherModal(){ return !$('shop').hidden || !$('modal').hidden || !$('inv').hidden || !$('saves').hidden; }
+function otherModal(){ return !$('shop').hidden || !$('modal').hidden || !$('inv').hidden || !$('saves').hidden || !$('board').hidden; }
 function modalOpen(){ return anyQuiz() || otherModal(); }
 function revealTile(x,y,dirt){
   const t=world.tiles[y*W+x];
@@ -2154,6 +2195,118 @@ function travel(id,fresh=false){
 function openShop(){ if(screen!=='game' || !$('modal').hidden || anyQuiz()) return; if(!$('inv').hidden) closeInv(); G.players.forEach(p=>p.dirStack=[]); renderShop(); $('shop').hidden=false; }
 function closeShop(){ $('shop').hidden=true; cvs.focus(); }
 
+/* ---------- scoreboard: claude.ai shared database (absent on other hosts) ---------- */
+const BOARD={ state:'init', db:null, user:null, uid:null, canWrite:null, isOwner:false, rows:[], loaded:false, slow:false, err:'', unsub:null, sort:'score', posting:false, armDel:null };
+const BOARD_IDS_KEY='diamond-explorers-board-ids', BOARD_NAME_KEY='diamond-explorers-board-name';
+const calcScore=()=>G.level*100+G.team.solved*10+G.team.total+G.team.kills*5;
+const myBoardIds=()=>store(()=>JSON.parse(localStorage.getItem(BOARD_IDS_KEY)||'{}'))||{};
+async function boardInit(){
+  const c=window.claude;
+  if(!c || typeof c.use!=='function'){ BOARD.state='none'; ['boardBtn','titleBoardBtn','mBoard'].forEach(id=>$(id).hidden=true); return; }
+  try{
+    const [db,user]=await Promise.all([c.use('db'),c.use('user')]);
+    BOARD.db=db; BOARD.user=user;
+    if(!db){ BOARD.state='none'; }
+    else {
+      BOARD.state='ready';
+      if(user){ const [o,w,id]=await Promise.all([user.isOwner(),user.can('data.write'),user.id()]); BOARD.isOwner=o; BOARD.canWrite=w; BOARD.uid=id; }
+    }
+  }catch(e){ BOARD.state='none'; }
+  if(!$('board').hidden){ subscribeBoard(); renderBoard(); }
+}
+function subscribeBoard(){
+  if(BOARD.unsub || !BOARD.db) return;
+  const timer=setTimeout(()=>{ BOARD.slow=true; renderBoard(); },10000);
+  BOARD.unsub=BOARD.db.collection('scores').orderBy('score','desc').limit(300).onSnapshot(snap=>{
+    if(!snap.metadata.fromCache){ clearTimeout(timer); BOARD.slow=false; }
+    BOARD.loaded=true; BOARD.rows=snap.docs.map(d=>({ id:d.id, ...(d.data()||{}) })); renderBoard();
+  },err=>{ clearTimeout(timer); BOARD.loaded=true; BOARD.err=err.code||'unavailable'; BOARD.unsub=null; renderBoard(); });
+}
+function openBoard(){
+  if(screen==='game' && anyQuiz()) return;
+  if(screen==='game'){ if(!$('inv').hidden) closeInv(); $('shop').hidden=true; $('modal').hidden=true; G.players.forEach(p=>p.dirStack=[]); }
+  $('board').hidden=false; subscribeBoard(); renderBoard();
+  const inp=$('boardName'); if(inp && !inp.value) inp.focus();
+}
+function closeBoard(){ $('board').hidden=true; BOARD.armDel=null; if(screen==='game') cvs.focus(); }
+function renderBoard(){
+  if($('board').hidden) return;
+  document.querySelectorAll('#boardTabs button').forEach(b=>b.classList.toggle('on',b.dataset.sort===BOARD.sort));
+  const note=$('boardNote'), list=$('boardList'), post=$('boardPost');
+  note.className='board-note'; list.innerHTML='';
+  // posting box: only in a game, only where this viewer may write
+  post.innerHTML='';
+  if(screen==='game' && G && BOARD.state==='ready'){
+    if(BOARD.canWrite===false){ post.innerHTML=`<p class="board-note warn">${tr('이 계정은 점수판을 볼 수만 있어요. 점수는 아티팩트 주인 계정으로 로그인한 컴퓨터에서 올릴 수 있어요.','This account can only view the scoreboard. Scores can be posted from a computer signed in to the artifact owner\'s account.')}</p>`; }
+    else {
+      const tm=G.team, saved=store(()=>localStorage.getItem(BOARD_NAME_KEY))||'';
+      post.innerHTML=`<div class="post-box">
+        <div class="post-row"><input id="boardName" maxlength="12" autocomplete="off" placeholder="${tr('닉네임 (진짜 이름 말고!)','Nickname (not your real name!)')}"><button class="buy" id="boardSend">${tr('내 점수 올리기','Post my score')}</button></div>
+        <div class="post-stats">${G.mode===2?tr('2인 팀','2-player team'):tr('1인','1 player')} · Lv.${G.level} · ${tr('맞힌 문제','solved')} ${tm.solved} · ${tr('찾은 다이아몬드','diamonds')} ${tm.total} · ${tr('몬스터','monsters')} ${tm.kills} → <b>${tr('종합','total')} ${calcScore()}</b></div></div>`;
+      $('boardName').value=saved;
+      $('boardSend').addEventListener('click',postScore);
+      $('boardName').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); postScore(); } e.stopPropagation(); });
+    }
+  }
+  if(BOARD.state==='init'){ note.textContent=tr('점수판에 연결하는 중이에요…','Connecting to the scoreboard…'); return; }
+  if(BOARD.state==='none'){ note.className='board-note warn'; note.textContent=tr('점수판은 claude.ai 링크에서 로그인했을 때만 쓸 수 있어요. 이 주소에서는 볼 수 없어요.','The scoreboard works only on the claude.ai link while signed in. It is not available at this address.'); return; }
+  if(BOARD.err && !BOARD.rows.length){ note.className='board-note warn'; note.textContent=tr('점수판을 불러오지 못했어요. 창을 닫았다가 다시 열어 보세요.','Could not load the scoreboard. Close it and open it again.'); return; }
+  if(!BOARD.loaded){ note.textContent=BOARD.slow?tr('점수판에 아직 연결되지 않았어요. 인터넷 연결을 확인해 주세요.','Cannot reach the scoreboard yet. Check the internet connection.'):tr('점수를 불러오는 중이에요…','Loading scores…'); return; }
+  // rows are other people's input: coerce every field
+  const num=v=>Math.max(0,Math.floor(Number(v)||0));
+  const rows=BOARD.rows.map(r=>({ id:r.id, name:String(r.name||'?').slice(0,12), mode:num(r.mode)===2?2:1, level:Math.min(MAX_LV,num(r.level)), solved:num(r.solved), total:num(r.total), kills:num(r.kills), score:num(r.score), map:THEMES[r.map]?r.map:'meadow', at:num(r.at) }));
+  rows.sort((a,b)=>b[BOARD.sort]-a[BOARD.sort] || b.score-a.score || a.at-b.at);
+  if(!rows.length){ note.textContent=tr('아직 올라온 점수가 없어요. 첫 번째로 올려 보세요!','No scores yet. Be the first to post one!'); return; }
+  note.textContent=BOARD.slow?tr('연결이 느려서 점수가 최신이 아닐 수 있어요.','The connection is slow, so scores may be out of date.'):'';
+  const mine=new Set(Object.values(myBoardIds()));
+  rows.slice(0,50).forEach((r,i)=>{
+    const li=document.createElement('li'); if(mine.has(r.id)) li.className='me';
+    const d=r.at?new Date(r.at):null, date=d?`${d.getMonth()+1}/${d.getDate()}`:'';
+    const val=r[BOARD.sort], unit=BOARD.sort==='score'?tr('점','pts'):BOARD.sort==='solved'?tr('문제','solved'):tr('개','gems');
+    li.innerHTML=`<span class="rk">${i+1}</span><div class="nm"></div><div class="sc">${val}<small>${unit}</small></div>`;
+    const nm=li.querySelector('.nm'); nm.textContent=r.name;
+    const sm=document.createElement('small');
+    sm.textContent=`${r.mode===2?tr('2인','2P'):tr('1인','1P')} · Lv.${r.level} ${LV_NAME[r.level]||''} · ${tr('문제','solved')} ${r.solved} · ${tr('다이아','gems')} ${r.total} · ${tr('몬스터','monsters')} ${r.kills}${date?' · '+date:''}`;
+    nm.append(sm);
+    if(BOARD.isOwner){
+      const del=document.createElement('button'); del.className='del';
+      del.textContent=BOARD.armDel===r.id?tr('정말 지울까요?','Really delete?'):tr('지우기','Delete');
+      del.addEventListener('click',()=>deleteScore(r.id)); nm.append(del);
+    }
+    list.append(li);
+  });
+}
+async function postScore(){
+  if(BOARD.posting || !BOARD.db || !G) return;
+  const inp=$('boardName'), name=(inp.value||'').trim().slice(0,12);
+  if(!name){ sfx.no(); inp.focus(); toast(null,tr('닉네임을 적어 주세요','Type a nickname first'),'bad'); return; }
+  store(()=>localStorage.setItem(BOARD_NAME_KEY,name));
+  const tm=G.team, row={ name, mode:G.mode, level:G.level, solved:tm.solved, total:tm.total, kills:tm.kills, score:calcScore(), map:G.mapId, at:Date.now(), by:BOARD.uid||null };
+  // one entry per nickname per device: re-posting updates it
+  const ids=myBoardIds(), key=`${name}|${G.mode}`;
+  const col=BOARD.db.collection('scores'), ref=ids[key]?col.doc(ids[key]):col.doc();
+  BOARD.posting=true; const btn=$('boardSend'); if(btn){ btn.disabled=true; btn.textContent=tr('올리는 중…','Posting…'); }
+  try{
+    await ref.set(row);
+    ids[key]=ref.id; store(()=>localStorage.setItem(BOARD_IDS_KEY,JSON.stringify(ids)));
+    sfx.level(); toast(null,tr(`점수판에 올렸어요! 종합 ${row.score}점`,`Posted! Total score ${row.score}`),'good');
+  }catch(e){
+    sfx.no();
+    if(e && e.code==='invalid_argument'){ BOARD.canWrite=false; toast(null,tr('이 계정은 점수를 올릴 수 없어요 (보기만 가능)','This account cannot post scores (view only)'),'bad'); }
+    else if(e && e.code==='quota_exceeded') toast(null,tr('점수판이 가득 찼어요. 주인 계정에서 오래된 점수를 지워 주세요','The scoreboard is full. The owner needs to delete old scores'),'bad');
+    else toast(null,tr('점수를 올리지 못했어요. 잠시 뒤 다시 해 보세요','Could not post the score. Try again in a moment'),'bad');
+  }
+  BOARD.posting=false; renderBoard();
+}
+async function deleteScore(id){
+  if(!BOARD.isOwner || !BOARD.db) return;
+  if(BOARD.armDel!==id){ BOARD.armDel=id; renderBoard(); return; }   // second click confirms
+  BOARD.armDel=null;
+  try{ await BOARD.db.collection('scores').doc(id).delete(); toast(null,tr('점수를 지웠어요','Score deleted')); }
+  catch(e){ toast(null,tr('지우지 못했어요','Could not delete it'),'bad'); }
+  renderBoard();
+}
+
 /* ---------- screens ---------- */
 function layout(){
   DPR=Math.min(2,window.devicePixelRatio||1);
@@ -2183,7 +2336,7 @@ function startNew(mode,genders){
 function continueGame(given){
   ac();
   const d=given||readSave(); if(!d){ $('continueBtn').hidden=true; return; }
-  ['saves','shop','inv','modal'].forEach(id=>$(id).hidden=true); closeAllQuizzes();
+  ['saves','shop','inv','modal','board'].forEach(id=>$(id).hidden=true); closeAllQuizzes();
   const arr=k=>Array.isArray(d.team[k])?d.team[k]:[];
   const tm={ ...newTeam(), ...d.team, owned:arr('owned').length?arr('owned'):['hand'], pets:arr('pets'), items:arr('items'),
     bag:arr('bag').filter(it=>GEAR[it.id]) };
@@ -2273,7 +2426,7 @@ function closeSaves(){ $('saves').hidden=true; if(screen==='game') cvs.focus(); 
 function goTitle(){
   if(!$('inv').hidden) closeInv();
   save(); screen='title'; closeAllQuizzes();
-  ['hud','help0','help1','touch','shop','modal','inv','saves'].forEach(id=>$(id).hidden=true);
+  ['hud','help0','help1','touch','shop','modal','inv','saves','board'].forEach(id=>$(id).hidden=true);
   layout(); setupTitle();
 }
 function setupTitle(){
@@ -2309,6 +2462,7 @@ function applyLang(){
   document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
   $('langBtn').textContent=LANG==='en'?'한':'EN';
   $('langBtn').title=LANG==='en'?'한국어로 바꾸기':'Switch to English';
+  renderBoard();
   if(screen==='title') renderTitleText();
   else if(G){ buildHUD(); updateHUD(); [0,1].forEach(i=>{ if(i<G.mode) $('help'+i).innerHTML=keyHelp(i); }); }
 }
@@ -2536,6 +2690,7 @@ window.addEventListener('keydown',e=>{
   }
   if(!$('modal').hidden){ if(code==='Enter'||code==='Escape'||code==='Space'||code==='NumpadEnter'){ e.preventDefault(); $('modal').hidden=true; cvs.focus(); } return; }
   if(!$('saves').hidden){ if(code==='Escape'){ e.preventDefault(); closeSaves(); } return; }
+  if(!$('board').hidden){ if(code==='Escape'){ e.preventDefault(); closeBoard(); } return; }
   if(!$('inv').hidden){
     if(code==='Escape'||code==='KeyI'){ e.preventDefault(); closeInv(); }
     if(code==='Tab' && G.mode===2){ e.preventDefault(); dropHeld(); invIdx=1-invIdx; renderInv(); }
@@ -2596,6 +2751,12 @@ $('backBtn').addEventListener('click',()=>{ if(titleGenders.length){ titleGender
 $('continueBtn').addEventListener('click',()=>continueGame());
 $('loadBtn').addEventListener('click',()=>openSaves('load'));
 $('saveBtn').addEventListener('click',()=>{ $('saveBtn').blur(); openSaves('save'); });
+$('boardBtn').addEventListener('click',()=>{ $('boardBtn').blur(); openBoard(); });
+$('titleBoardBtn').addEventListener('click',openBoard);
+$('mBoard').addEventListener('click',()=>{ $('modal').hidden=true; openBoard(); });
+$('boardClose').addEventListener('click',closeBoard);
+$('board').addEventListener('click',e=>{ if(e.target.id==='board') closeBoard(); });
+$('boardTabs').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ BOARD.sort=b.dataset.sort; renderBoard(); }));
 $('savesClose').addEventListener('click',closeSaves);
 $('saves').addEventListener('click',e=>{ if(e.target.id==='saves') closeSaves(); });
 $('exportBtn').addEventListener('click',exportSave);
@@ -2628,7 +2789,7 @@ muted = store(()=>localStorage.getItem(SAVE_KEY+'-muted'))==='1';
 $('sndOn').hidden=muted; $('sndOff').hidden=!muted;
 document.querySelectorAll('.lang-opt').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
 $('langBtn').addEventListener('click',()=>{ $('langBtn').blur(); setLang(LANG==='en'?'ko':'en'); cvs.focus(); });
-layout(); setupTitle(); applyLang();
+layout(); setupTitle(); applyLang(); boardInit();
 requestAnimationFrame(frame);
 })();
 </script>
