@@ -217,6 +217,8 @@ body.two .qpanel.p1 .card{box-shadow:0 10px 0 rgba(0,0,0,.25),inset 0 0 0 3px va
 .q-title svg{width:26px;height:26px}
 .q-prob{font-family:var(--display);font-size:clamp(34px,6.5vw,60px);margin:12px 0 6px;font-variant-numeric:tabular-nums;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
 .q-diff{min-height:24px}
+.qpanel.jailq .card{border-color:#9aa3b5;background:linear-gradient(180deg,rgba(40,44,58,.97),rgba(20,28,66,.95))}
+.qpanel.jailq .q-title{color:#dfe5ec}
 .diff-badge{display:inline-block;font-family:var(--display);font-size:15px;padding:2px 12px;border-radius:10px;background:#ff9f43;color:#3a1a00}
 .q-msg{min-height:28px;font-family:var(--display);font-size:19px}
 .q-msg.good{color:var(--ok)} .q-msg.bad{color:var(--red)}
@@ -599,6 +601,9 @@ const PCOL = ['#5aa2ff','#6fe08a'];
 const DIRS = { up:[0,-1], down:[0,1], left:[-1,0], right:[1,0] };
 const SLOTS = ['head','weapon','armor','feet'];
 const BAG_W = 10, BAG_H = 4;
+/* the jail water monsters push players into: a fixed stone cell near the start */
+const JAIL = { x:2, y:11, w:5, h:3, cells:[{x:3,y:12},{x:5,y:12}], door:[{x:3,y:14},{x:5,y:14}] };
+const inJail=(x,y)=>x>=JAIL.x&&x<JAIL.x+JAIL.w&&y>=JAIL.y&&y<JAIL.y+JAIL.h;
 
 const $ = id => document.getElementById(id);
 const cvs = $('game'), ctx = cvs.getContext('2d');
@@ -651,7 +656,7 @@ function genWorld(seed, themeId){
       const edge=Math.min(x,y,W-1-x,H-1-y);
       let m=n1(x*0.11,y*0.11)*0.75+n3(x*0.3,y*0.3)*0.25;
       if(edge<3) m+=(3-edge)*0.12;
-      if(Math.hypot(x-8,y-7)<4) m=0;
+      if(Math.hypot(x-8,y-7)<4 || (x>=1&&x<=7&&y>=9&&y<=15)) m=0;   // start area and the jail stay clear
       if(m>0.6) type='mountain';
     }
     tiles[y*W+x]={ type, d:0, hits:0, need:10, dug:false, depth:0, lake };
@@ -670,7 +675,7 @@ function genWorld(seed, themeId){
       const j=ny*W+nx; if(dist[j]<0){ dist[j]=dist[i]+1; q.push(j); }
     }
   }
-  const chests=lakes.map(()=>({x:-1,y:-1,opened:false,score:-1e9}));
+  const chests=lakes.map((_,k)=>({x:-1,y:-1,opened:false,score:-1e9,lake:k}));
   for(let y=0;y<H;y++) for(let x=0;x<W;x++){
     const i=y*W+x, t=tiles[i]; if(t.type!=='water') continue;
     t.depth=dist[i];
@@ -685,13 +690,14 @@ function genWorld(seed, themeId){
     mc.fillStyle = t.type==='water' ? th.water[Math.min(5,t.depth+1)] : t.type==='sand' ? th.shore[0] : t.type==='mountain' ? th.peak[0] : th.ground[1];
     mc.fillRect(x,y,1,1);
   }
+  for(let y=JAIL.y;y<JAIL.y+JAIL.h;y++) for(let x=JAIL.x;x<JAIL.x+JAIL.w;x++) tiles[y*W+x].d=0;
   return { seed, themeId, th, tiles, chests:chests.filter(c=>c.x>=0), starts, minimap:mm, monsters:[], drops:[] };
 }
 
 function makePlayer(idx, gender){
   return { idx, gender, tx:0,ty:0,fx:0,fy:0,x:0,y:0,t:1,moving:false,dir:'down',anim:0,swing:0,
     dirStack:[], trail:[], radar:null, radarT:0, equip:{head:null,weapon:null,armor:null,feet:null},
-    mode:'dig', pend:{n:null,h:null}, hp:50, inv:0, dead:0, lastHit:-99, atkCd:0, phoenixT:-999 };
+    mode:'dig', pend:{n:null,h:null}, jail:null, hp:50, inv:0, dead:0, lastHit:-99, atkCd:0, phoenixT:-999 };
 }
 const newTeam=()=>({ diamonds:0, total:0, holes:0, solved:0, streak:0, kills:0, owned:['hand'], pets:[], items:[], bag:[], keys:0, potS:0, potL:0, arrows:0, bullets:0 });
 function placePlayers(){
@@ -711,7 +717,7 @@ function loadMap(){
 function snapshot(){
   stashMap();
   return { v:4, savedAt:Date.now(), mode:G.mode, level:G.level, mapId:G.mapId, maps:G.maps, ownedMaps:G.ownedMaps, flags:G.flags, team:G.team,
-    players:G.players.map(p=>({ gender:p.gender, px:p.tx, py:p.ty, dir:p.dir, equip:p.equip, mode:p.mode, hp:Math.round(p.hp) })) };
+    players:G.players.map(p=>({ gender:p.gender, px:p.jail?JAIL.door[p.idx].x:p.tx, py:p.jail?JAIL.door[p.idx].y:p.ty, dir:p.dir, equip:p.equip, mode:p.mode, hp:Math.round(p.hp) })) };
 }
 function save(){
   if(!G) return;
@@ -1216,6 +1222,32 @@ function drawChest(sx,sy,open){
   if(!open){ const ph=(time*0.9)%1.4; drawSpark(ctx,sx+T*0.78,sy+T*0.3,T*0.2*Math.sin(Math.min(1,ph)*Math.PI),1);
     const ph2=(time*0.9+0.7)%1.4; drawSpark(ctx,sx+T*0.2,sy+T*0.55,T*0.14*Math.sin(Math.min(1,ph2)*Math.PI),1); }
 }
+function drawJail(cam,front){
+  const x=JAIL.x*T-cam.x, y=JAIL.y*T-cam.y, w=JAIL.w*T, h=JAIL.h*T, u=T/16;
+  if(!front){
+    ctx.fillStyle='#5b606c'; ctx.fillRect(x-u,y-u*6,w+2*u,h+u*6);
+    ctx.fillStyle='#8a909c'; ctx.fillRect(x+u*2,y+u*2,w-u*4,h-u*4);
+    ctx.fillStyle='rgba(0,0,0,.12)'; for(let k=1;k<JAIL.w;k++) ctx.fillRect(x+k*T,y+u*2,1,h-u*4);
+    ctx.fillStyle='#3f434d'; ctx.fillRect(x-u*2,y-u*7,w+u*4,u*4);
+    label(tr('감옥','JAIL'),x+w/2,y-u*5,'#ffcf3f',Math.round(T*0.34));
+    return;
+  }
+  // iron bars over whoever is inside
+  ctx.fillStyle='#2b2f38';
+  for(let bx=x+u*3;bx<x+w-u*2;bx+=u*5) ctx.fillRect(bx,y+u*2,Math.max(2,u*1.1),h-u*3);
+  ctx.fillRect(x+u*2,y+u*2,w-u*4,u*1.2); ctx.fillRect(x+u*2,y+h*0.55,w-u*4,u*1.2); ctx.fillRect(x+u*2,y+h-u*2,w-u*4,u*1.2);
+  ctx.strokeStyle='#5b606c'; ctx.lineWidth=u*1.5; ctx.strokeRect(x,y,w,h);
+}
+function drawChestShield(sx,sy,n){
+  const u=T/16, r=T*0.62+Math.sin(time*3)*u*0.6;
+  ctx.fillStyle='rgba(120,200,255,.22)'; ctx.beginPath(); ctx.arc(sx+T/2,sy+T/2,r,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(200,240,255,.85)'; ctx.lineWidth=Math.max(2,u); ctx.stroke();
+  // padlock
+  const lx=sx+T/2-u*2.5, ly=sy-u*3;
+  ctx.strokeStyle='#ffcf3f'; ctx.lineWidth=u*1.2; ctx.beginPath(); ctx.arc(lx+u*2.5,ly+u*1.5,u*1.8,Math.PI,0); ctx.stroke();
+  ctx.fillStyle='#ffcf3f'; ctx.fillRect(lx,ly+u*1.5,u*5,u*4); ctx.fillStyle='#8a5a00'; ctx.fillRect(lx+u*2,ly+u*2.8,u,u*1.6);
+  label('×'+n,sx+T*0.95,sy+T*0.1,'#ff9f43',Math.round(T*0.28));
+}
 function drawDrop(dp,cam){
   const sx=dp.x*T-cam.x, sy=dp.y*T-cam.y, b=Math.sin(time*4+dp.x)*T*0.04;
   const g=ctx.createRadialGradient(sx+T/2,sy+T/2,1,sx+T/2,sy+T/2,T*0.6);
@@ -1379,21 +1411,23 @@ function makeHardProblem(){
   if(r<0.8){ const a=rnd(200,999), b=rnd(100,a-1); return { text:`${a} − ${b}`, ans:a-b, bonus:2 }; }
   const a=rnd(12,49), b=rnd(3,9); return { text:`${a} × ${b}`, ans:a*b, bonus:2 };
 }
-function openQuiz(p,n,onOK,what,hard=false){
+function openQuiz(p,n,onOK,what,hard=false,special=''){
   dropHeld(); p.dirStack=[]; p.moving=false;
   // a problem the player closed comes back on their next pickup, with its speed-bonus clock still running
-  const kind=hard?'h':'n', back=!!p.pend[kind];
+  const kind=special==='jail'?'j':hard?'h':'n', back=kind!=='j' && !!p.pend[kind];
   const ent=p.pend[kind] || (p.pend[kind]={ prob:hard?makeHardProblem():makeProblem(), t0:performance.now() });
-  quizzes[p.idx]={ p, n, onOK, what, hard, kind, ent, back, prob:ent.prob, busy:false, val:'', t0:ent.t0 };
+  quizzes[p.idx]={ p, n, onOK, what, hard, kind, ent, back, jail:special==='jail', prob:ent.prob, busy:false, val:'', t0:ent.t0 };
   buildQuiz(p.idx); syncKb();
 }
 function buildQuiz(i){
   const q=quizzes[i], el=$('quiz'+i);
   const tag=G.mode===2?`${i+1}P · `:'';
-  const title=q.hard
+  const title=q.jail
+    ? tr(`${tag}감옥에 갇혔어요! 문제를 맞히면 나갈 수 있어요`,`${tag}You're in jail! Answer correctly to get out`)
+    : q.hard
     ? tr(`${tag}청소기 어려운 문제! 풀면 다이아몬드 ${q.n}개`,`${tag}Vacuum challenge! Solve it for ${q.n} diamonds`)
     : tr(`${tag}${q.what} ${q.n}개를 주우려면 문제를 풀어요!`,`${tag}Solve this to pick up ${q.n} ${q.n===1?q.what.replace(/s$/,''):q.what}!`);
-  el.className='qpanel p'+i+(q.hard?' hard':'');
+  el.className='qpanel p'+i+(q.hard?' hard':'')+(q.jail?' jailq':'');
   el.innerHTML=`<div class="card" role="dialog" aria-label="${tr('수학 문제','Math problem')}">
     <div class="q-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#2fc8ec"/><path d="M6 3h12l4 6H2z" fill="#9cf4ff"/></svg><span>${title}</span></div>
     <div class="q-timer"><i></i></div><div class="q-timer-txt"></div>
@@ -1414,7 +1448,8 @@ function showProblem(i){
   el.querySelector('.qans').textContent='';
   const m=el.querySelector('.q-msg'); m.textContent=''; m.className='q-msg';
   if(q.back){ m.className='q-msg bad'; m.textContent=tr('아까 닫은 문제예요. 이 문제를 풀어야 다음 문제로 넘어가요!','This is the problem you closed. Solve it to move on!'); q.back=false; }
-  const dx=q.prob.bonus||0, df=el.querySelector('.q-diff');
+  if(q.jail){ el.querySelector('.q-timer').hidden=true; el.querySelector('.q-timer-txt').hidden=true; el.querySelector('[data-k="later"]').hidden=true; }
+  const dx=q.jail?0:(q.prob.bonus||0), df=el.querySelector('.q-diff');
   df.innerHTML = dx ? `<span class="diff-badge">${tr(`어려운 문제! 다이아몬드 +${dx}`,`Tough one! +${dx} diamonds`)}</span>` : '';
   const st=G.team.streak;
   el.querySelector('[data-k="later"]').textContent = st>0
@@ -1461,14 +1496,14 @@ function submitQuiz(i){
   const tm=G.team;
   if(+q.val===q.prob.ans){
     q.busy=true; tm.solved++; tm.streak++;
-    const quick=performance.now()-q.t0<=QUICK_MS, mult=quick?2:1;
+    const quick=!q.jail && performance.now()-q.t0<=QUICK_MS, mult=quick?2:1;
     sfx.right(); msg.className='q-msg good';
-    msg.textContent = quick ? tr('정답! 빨리 풀어서 다이아몬드 2배!','Correct! Fast answer: double diamonds!') : tr('정답이에요! 최고!','Correct! Awesome!');
+    msg.textContent = q.jail ? tr('정답! 감옥 문이 열려요','Correct! The jail door opens') : quick ? tr('정답! 빨리 풀어서 다이아몬드 2배!','Correct! Fast answer: double diamonds!') : tr('정답이에요! 최고!','Correct! Awesome!');
     const bonus = tm.streak%5===0 ? Math.max(3,Math.round(3*world.th.rich)) : 0;
     q.p.pend[q.kind]=null;
     setTimeout(()=>{
       closeQuiz(i); const ok=q.onOK(mult)!==false;
-      const dx=q.prob.bonus||0;
+      const dx=q.jail?0:(q.prob.bonus||0);
       if(ok && dx){ const extra=dx*gemMult()*mult; giveGems(extra,q.p.x,q.p.y-0.3,tr(`어려운 문제 +${extra}`,`Tough one +${extra}`)); }
       if(quick) floatText(q.p.x*T+T/2,q.p.y*T-T*0.6,tr('빠른 정답 ×2!','Speed bonus ×2!'),'#ffcf3f',0.45);
       if(bonus){ giveGems(bonus,q.p.x,q.p.y-0.6,tr(`보너스 +${bonus}`,`Bonus +${bonus}`)); toast(q.p,tr(`5문제 연속 정답! 보너스 다이아몬드 ${bonus}개!`,`5 in a row! ${bonus} bonus diamonds!`),'good'); }
@@ -1492,7 +1527,7 @@ function closeAllQuizzes(){ [0,1].forEach(i=>{ quizzes[i]=null; $('quiz'+i).hidd
   $('quiz'+i).addEventListener('click',e=>{
     if(!quizzes[i]) return;
     const b=e.target.closest('button');
-    if(b && b.dataset.k==='later'){ closeQuiz(i,true); return; }
+    if(b && b.dataset.k==='later'){ if(!quizzes[i].jail) closeQuiz(i,true); return; }
     if(!b) return;
     quizInput(i, b.dataset.d!==undefined ? b.dataset.d : b.dataset.k);
   });
@@ -1513,7 +1548,7 @@ function revealTile(x,y,dirt){
 }
 function act1(p){ if(p.mode==='fight') attack(p); else dig(p); }
 function dig(p){
-  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.moving || p.dead>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.jail || p.moving || p.dead>0) return;
   const t=tileAt(p.tx,p.ty);
   if(t.type==='water'){ toast(p,tr('물속은 팔 수 없어요. 반짝이는 보물상자를 찾아봐요!',"You can't dig underwater. Look for the shiny treasure chest!")); return; }
   if(t.dug){ toast(p,t.d>0?tr(`다이아몬드가 있어요! ${grabKeyName(p)}로 주워요`,`There's a diamond! Press ${grabKeyName(p)} to pick it up`):tr('이미 판 곳이에요. 다른 곳을 파 봐요!','Already dug here. Try another spot!')); return; }
@@ -1550,6 +1585,7 @@ function grab(p){
   // a player can open their own problem even while the other player is solving one
   if(screen!=='game' || otherModal() || !p || quizzes[p.idx] || p.moving || p.dead>0) return;
   const t=tileAt(p.tx,p.ty), ch=chestAt(p.tx,p.ty), dp=dropAt(p.tx,p.ty);
+  if(ch && !ch.opened && lakeGuards(ch)>0){ sfx.no(); toast(p,tr(`이 호수의 물 몬스터 ${lakeGuards(ch)}마리를 먼저 물리쳐야 보물상자를 열 수 있어요!`,`Defeat the ${lakeGuards(ch)} water monster(s) in this lake before you can open the chest!`),'bad'); return; }
   if(ch && !ch.opened){
     if(G.team.keys<=0){ sfx.no(); toast(p,tr('보물상자를 열려면 열쇠가 필요해요. 상점에서 다이아몬드 10개로 사요!','You need a key to open the chest. Buy one at the shop for 10 diamonds!'),'bad'); return; }
     const gm=gemMult();
@@ -1607,7 +1643,7 @@ function grab(p){
   toast(p, ch ? tr('이 보물상자는 이미 열었어요','This chest is already open') : t.type==='water'?tr('여기엔 주울 게 없어요. 보물상자 위에서 눌러요!','Nothing to pick up here. Try it on top of a chest!'):tr('주울 다이아몬드가 없어요. 먼저 땅을 파 봐요!','No diamonds here. Dig first!'));
 }
 function swapMode(p){
-  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.dead>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.jail || p.dead>0) return;
   p.mode = p.mode==='dig' ? 'fight' : 'dig';
   const w=weaponOf(p);
   floatText(p.x*T+T/2,p.y*T-T*0.2, p.mode==='fight' ? tr(`싸우기: ${w.name}`,`Fight: ${w.name}`) : tr(`파기: ${curTool().name}`,`Dig: ${curTool().name}`), p.mode==='fight'?'#ff9a9a':'#ffd28a',0.38);
@@ -1615,7 +1651,7 @@ function swapMode(p){
   sfx.tick(); updateHUD();
 }
 function drinkPotion(p){
-  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.dead>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.jail || p.dead>0) return;
   const tm=G.team, s=stats(p);
   if(p.hp>=s.maxHp){ toast(p,tr('HP가 가득 차 있어요!','HP is already full!')); return; }
   const missing=s.maxHp-p.hp;
@@ -1634,7 +1670,8 @@ function enterTile(p){
   }
   if(t.type==='mountain' && !G.flags.mt){ G.flags.mt=1; toast(p,tr('산에는 다이아몬드가 더 많이 숨어 있대요!','Mountains hide more diamonds!')); }
   const ch=chestAt(p.tx,p.ty);
-  if(ch && !ch.opened) toast(p, G.team.keys>0 ? tr(`보물상자다! 열쇠가 있으니 ${grabKeyName(p)}를 눌러 열어요`,`A treasure chest! You have a key, press ${grabKeyName(p)} to open it`) : tr('보물상자다! 열쇠가 있어야 열 수 있어요 (상점에서 10개)','A treasure chest! You need a key to open it (10 at the shop)'),'good');
+  if(ch && !ch.opened && lakeGuards(ch)>0) toast(p,tr(`물 몬스터가 보물상자를 지키고 있어요! ${lakeGuards(ch)}마리를 물리쳐요`,`Water monsters guard this chest! Defeat ${lakeGuards(ch)} of them`),'bad');
+  else if(ch && !ch.opened) toast(p, G.team.keys>0 ? tr(`보물상자다! 열쇠가 있으니 ${grabKeyName(p)}를 눌러 열어요`,`A treasure chest! You have a key, press ${grabKeyName(p)} to open it`) : tr('보물상자다! 열쇠가 있어야 열 수 있어요 (상점에서 10개)','A treasure chest! You need a key to open it (10 at the shop)'),'good');
   else if(dropAt(p.tx,p.ty)) toast(p,tr(`몬스터가 떨어뜨린 다이아몬드! ${grabKeyName(p)}로 주워요`,`Monster diamonds! Press ${grabKeyName(p)} to pick them up`),'good');
 }
 function maxSpan(){ return { x:CW/ZMIN/T-3, y:CH/ZMIN/T-3 }; }
@@ -1644,6 +1681,7 @@ function tryMove(p,d){
   p.dir=d; const [dx,dy]=DIRS[d], nx=p.tx+dx, ny=p.ty+dy;
   if(nx<0||ny<0||nx>=W||ny>=H) return;
   if(G.players.some(o=>o!==p && o.dead<=0 && o.tx===nx && o.ty===ny)) return;
+  if(inJail(nx,ny)) return;   // the jail is solid from outside
   if(G.mode===2){
     const o=G.players[1-p.idx], m=maxSpan();
     if(o.dead<=0 && (Math.abs(nx-o.tx)>m.x || Math.abs(ny-o.ty)>m.y)){
@@ -1659,7 +1697,7 @@ function tryMove(p,d){
 const FACE={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
 const liveMonsters=()=>world.monsters.filter(m=>m.alive);
 function attack(p){
-  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.dead>0 || p.atkCd>0) return;
+  if(screen!=='game' || !p || otherModal() || quizzes[p.idx] || p.jail || p.dead>0 || p.atkCd>0) return;
   const w=weaponOf(p), s=stats(p), tm=G.team;
   const [fx,fy]=FACE[p.dir];
   if(w.atk==='arrow' && tm.arrows<=0){ toast(p,tr('화살이 없어요! 상점에서 사요','Out of arrows! Buy more at the shop'),'bad'); p.atkCd=0.4; return; }
@@ -1750,8 +1788,42 @@ function spawnMonsters(){
     const [type,d]=kinds[rnd(0,kinds.length-1)];
     const mul=world.th.mon, hp=Math.round(d.hp*(1+(L-6)*0.5)*mul);
     world.monsters.push({ type, x:spot.x, y:spot.y, hx:spot.x, hy:spot.y, hp, max:hp, dmg:Math.round(d.dmg*(1+(L-6)*0.3)*mul),
-      cd:1+Math.random()*2, tgt:null, dir:'left', anim:Math.random()*5, hitT:0, lunge:0, alive:true, respawn:0 });
+      cd:1+Math.random()*2, tgt:null, dir:'left', anim:Math.random()*5, hitT:0, lunge:0, alive:true, respawn:0,
+      lake: terr==='water' ? world.tiles[spot.y*W+spot.x].lake : -1 });
   }
+  // every lake's chest has at least one water monster guarding it
+  const waterKinds=ok.filter(([,d])=>d.terr==='water');
+  for(const ch of world.chests){
+    if(world.monsters.some(m=>m.lake===ch.lake) || !waterKinds.length) continue;
+    const near=pools.water.filter(t=>world.tiles[t.y*W+t.x].lake===ch.lake && Math.hypot(t.x-ch.x,t.y-ch.y)<=4);
+    const spot=near[rnd(0,near.length-1)] || null; if(!spot) continue;
+    const [type,d]=waterKinds[rnd(0,waterKinds.length-1)];
+    const mul=world.th.mon, hp=Math.round(d.hp*(1+(L-6)*0.5)*mul);
+    world.monsters.push({ type, x:spot.x, y:spot.y, hx:spot.x, hy:spot.y, hp, max:hp, dmg:Math.round(d.dmg*(1+(L-6)*0.3)*mul),
+      cd:1+Math.random()*2, tgt:null, dir:'left', anim:Math.random()*5, hitT:0, lunge:0, alive:true, respawn:0, lake:ch.lake });
+  }
+}
+const lakeGuards=ch=>world.monsters.filter(m=>m.alive && m.lake===ch.lake).length;
+/* water monsters don't hurt: they shove you into the jail, and a math problem is the only way out */
+function pushToJail(p){
+  if(p.inv>0 || p.dead>0 || p.jail || quizzes[p.idx]) return;
+  const cell=JAIL.cells[p.idx];
+  p.jail={ t:0, fx:p.x, fy:p.y, tx:cell.x, ty:cell.y }; p.moving=false; p.dirStack=[];
+  sfx.splash(); burst(p.x*T+T/2,p.y*T+T/2,['#bfeaf7','#ffffff','#6fd0ee'],24,260,T/12);
+  toast(p,tr('물 몬스터가 감옥으로 밀어냈어요! 문제를 풀면 나갈 수 있어요','A water monster shoved you into jail! Solve a problem to get out'),'bad');
+}
+function updateJailFlight(p,dt){
+  const j=p.jail; j.t=Math.min(1,j.t+dt/0.9);
+  p.x=lerp(j.fx,j.tx,j.t); p.y=lerp(j.fy,j.ty,j.t)-Math.sin(j.t*Math.PI)*2.5;
+  if(j.t<1) return;
+  Object.assign(p,{ tx:j.tx, ty:j.ty, fx:j.tx, fy:j.ty, x:j.tx, y:j.ty, dir:'down', trail:[] });
+  p.jail='in'; sfx.hurt();
+  openQuiz(p,0,()=>{
+    const door=JAIL.door[p.idx];
+    p.jail=null; Object.assign(p,{ tx:door.x, ty:door.y, fx:door.x, fy:door.y, x:door.x, y:door.y, dir:'down', inv:2 });
+    sfx.travel(); burst(door.x*T+T/2,door.y*T+T/2,['#ffcf3f','#ffffff','#63e39a'],24,220,T/12);
+    toast(p,tr('감옥에서 나왔어요! 물 몬스터를 조심해요','You got out of jail! Watch out for water monsters'),'good');
+  },'',false,'jail');
 }
 function updateMonsters(dt){
   for(const m of world.monsters){
@@ -1766,17 +1838,17 @@ function updateMonsters(dt){
     }
     m.hitT-=dt; m.cd-=dt; m.anim+=dt; m.lunge=Math.max(0,m.lunge-dt);
     let tp=null, td=1e9;
-    for(const p of G.players){ if(p.dead>0) continue; const dd=Math.hypot(p.x-m.x,p.y-m.y); if(dd<td){ td=dd; tp=p; } }
+    for(const p of G.players){ if(p.dead>0 || p.jail) continue; const dd=Math.hypot(p.x-m.x,p.y-m.y); if(dd<td){ td=dd; tp=p; } }
     let goal=null, spd=d.spd;
     if(tp && td<d.aggro){
       m.dir = tp.x<m.x?'left':'right';
       if(d.kind==='melee'){
         goal={x:tp.x,y:tp.y};
-        if(td<0.95*(d.big||1) && m.cd<=0){ hurtPlayer(tp,m.dmg); m.cd=1.1; m.lunge=0.25; }
+        if(td<0.95*(d.big||1) && m.cd<=0){ if(d.terr==='water') pushToJail(tp); else hurtPlayer(tp,m.dmg); m.cd=1.1; m.lunge=0.25; }
       } else {
         if(m.cd<=0 && td<d.range){
           const a=Math.atan2(tp.y-m.y,tp.x-m.x), sp=6;
-          shots.push({ x:m.x, y:m.y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, life:d.range/sp+0.3, dmg:m.dmg, from:'m', kind:d.shot });
+          shots.push({ x:m.x, y:m.y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, life:d.range/sp+0.3, dmg:m.dmg, from:'m', kind:d.shot, jail:d.terr==='water' });
           m.cd=d.cd*(0.8+Math.random()*0.4); m.lunge=0.2;
         }
         if(td<2.5) goal={x:m.x+(m.x-tp.x),y:m.y+(m.y-tp.y)};
@@ -1802,7 +1874,7 @@ function updateShots(dt){
   for(const s of shots){
     s.x+=s.vx*dt; s.y+=s.vy*dt; s.life-=dt;
     if(s.from==='m'){
-      for(const p of G.players){ if(p.dead<=0 && Math.hypot(p.x-s.x,p.y-s.y)<0.45){ hurtPlayer(p,s.dmg); s.life=0; break; } }
+      for(const p of G.players){ if(p.dead<=0 && !p.jail && Math.hypot(p.x-s.x,p.y-s.y)<0.45){ if(s.jail) pushToJail(p); else hurtPlayer(p,s.dmg); s.life=0; break; } }
     } else {
       for(const m of world.monsters){ if(m.alive && Math.hypot(m.x-s.x,m.y-s.y)<0.5*(MON[m.type].big||1)){
         const l=Math.hypot(s.vx,s.vy)||1; damageMonster(m,s.dmg,s.crit,s.vx/l,s.vy/l); s.life=0;
@@ -2172,7 +2244,7 @@ const LEVEL_EN={
   3:'Welcome to the Desert Land! Now you can buy the diamond radar, the diamond vacuum and the golden crown.',
   4:'Welcome to the Candy Land! Now you can buy the diamond drill and the baby dragon.',
   5:'Monsters are coming soon! Get ready with swords, armor, shoes, a bow and potions. Q switches between digging and fighting.',
-  6:'Monsters are here! Watch out for goblins, skeleton archers and slimes in the mountains and water. Defeat them and they drop diamonds.',
+  6:'Monsters are here! Goblins and skeleton archers live in the mountains. Water monsters shove you into jail, and they guard the lake chests, so defeat them to open the chests.',
   7:'More monsters, and water spirits appear too. You can buy a helmet, lightning boots and a turtle.',
   8:'Tough rock golems appear! You can buy the diamond sword, diamond armor and starlight staff.',
   9:'A giant squid appears in the water! You can buy the legendary bow and the phoenix.',
@@ -2184,7 +2256,7 @@ const LEVEL_TEXT={
   3:['사막 나라에 왔어요! 다이아 레이더, 다이아 청소기, 황금 왕관을 살 수 있어요.',['radar','vacuum','crown']],
   4:['사탕 나라에 왔어요! 다이아 드릴과 아기 용을 살 수 있어요.',['drill','dragon','candy']],
   5:['곧 몬스터가 나타나요! 검, 갑옷, 신발, 활과 물약으로 싸울 준비를 해요. Q로 파기와 싸우기를 바꿔요.',['sword_wood','bow','potS']],
-  6:['몬스터가 나타났어요! 산과 물에 사는 고블린, 해골 궁수, 슬라임을 조심해요. 물리치면 다이아몬드를 떨어뜨려요.',['goblin','archer','slime']],
+  6:['몬스터가 나타났어요! 산에는 고블린과 해골 궁수가 살아요. 물 몬스터는 플레이어를 감옥으로 밀어 넣고 호수 속 보물상자를 지켜요. 물리쳐야 상자를 열 수 있어요.',['goblin','archer','slime']],
   7:['몬스터가 더 많아지고 물의 정령도 나타나요. 투구, 번개 신발, 거북이를 살 수 있어요.',['spirit','boots_bolt','turtle']],
   8:['단단한 바위 골렘이 나타나요! 다이아 검, 다이아 갑옷, 별빛 지팡이를 살 수 있어요.',['golem','sword_dia','staff']],
   9:['물속에 대왕 오징어가 나타나요! 전설의 활과 불사조를 살 수 있어요.',['squid','bow_legend','phoenix']],
@@ -2369,6 +2441,7 @@ function continueGame(given){
   world=null; pets=[]; loadMap(); placePlayers();
   G.players.forEach((p,i)=>{ const s=d.players[i]; const px=Math.min(W-1,Math.max(0,s.px|0)), py=Math.min(H-1,Math.max(0,s.py|0));
     Object.assign(p,{ tx:px,ty:py,fx:px,fy:py,x:px,y:py,dir:DIRS[s.dir]?s.dir:'down', mode:s.mode==='fight'?'fight':'dig' });
+    if(inJail(px,py)){ const dr=JAIL.door[i]; Object.assign(p,{ tx:dr.x,ty:dr.y,fx:dr.x,fy:dr.y,x:dr.x,y:dr.y }); }
     if(s.equip) for(const k of SLOTS){ const it=s.equip[k]; if(it && GEAR[it.id] && GEAR[it.id].slot===k){ p.equip[k]={uid:uidSeq++,id:it.id}; } }
     p.hp=Math.min(stats(p).maxHp, s.hp>0?s.hp:stats(p).maxHp); });
   particles=[]; floats=[]; flyers=[];
@@ -2524,6 +2597,7 @@ function update(dt){
     if(!paused){
       for(const p of G.players){
         if(p.dead>0){ p.dead-=dt; if(p.dead<=0) revive(p); continue; }
+        if(p.jail && p.jail!=='in'){ updateJailFlight(p,dt); continue; }
         if(quizzes[p.idx]){ p.dirStack=[]; if(p.swing>0) p.swing=Math.max(0,p.swing-dt*5); continue; }
         p.inv=Math.max(0,p.inv-dt); p.atkCd=Math.max(0,p.atkCd-dt);
         const s=stats(p);
@@ -2572,7 +2646,8 @@ function renderView(cz){
   const x0=Math.max(0,Math.floor(cam.x/T)), y0=Math.max(0,Math.floor(cam.y/T));
   const x1=Math.min(W-1,Math.floor((cam.x+vw)/T)), y1=Math.min(H-1,Math.floor((cam.y+vh)/T));
   for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++) drawTile(x,y,x*T-cam.x,y*T-cam.y);
-  for(const c of world.chests) drawChest(c.x*T-cam.x,c.y*T-cam.y,c.opened);
+  for(const c of world.chests){ drawChest(c.x*T-cam.x,c.y*T-cam.y,c.opened); if(!c.opened && screen==='game' && lakeGuards(c)>0) drawChestShield(c.x*T-cam.x,c.y*T-cam.y,lakeGuards(c)); }
+  drawJail(cam,false);
   if(screen==='game' && G){
     for(const dp of world.drops) drawDrop(dp,cam);
     for(const pe of pets) if(pe.type==='cat'){
@@ -2596,6 +2671,7 @@ function renderView(cz){
       ...world.monsters.filter(m=>m.alive).map(m=>({y:m.y,draw:()=>drawMonster(m,cam)})),
     ];
     ents.sort((a,b)=>a.y-b.y).forEach(e=>e.draw());
+    drawJail(cam,true);
     for(const s of shots) drawShot(s,cam);
     for(const q of particles) if(q.col!=='bubble') drawParticle(q,cam);
     for(const p of G.players){
@@ -2664,6 +2740,7 @@ function drawMinimap(){
   ctx.lineWidth=1; ctx.strokeStyle='rgba(255,255,255,.8)';
   ctx.strokeRect(x+cam.x/T*sc,y+cam.y/T*sc,Math.min(mw,CW/cam.z/T*sc),Math.min(mh,CH/cam.z/T*sc));
   for(const ch of world.chests) if(!ch.opened){ const r=sc*1.6+Math.sin(time*5)*sc*0.6; ctx.fillStyle='#ffcf3f'; ctx.beginPath(); ctx.arc(x+(ch.x+0.5)*sc,y+(ch.y+0.5)*sc,r,0,Math.PI*2); ctx.fill(); }
+  ctx.fillStyle='#8a909c'; ctx.fillRect(x+JAIL.x*sc,y+JAIL.y*sc,JAIL.w*sc,JAIL.h*sc);
   ctx.fillStyle='#ff4d4d'; for(const m of world.monsters) if(m.alive) ctx.fillRect(x+(m.x+0.5)*sc-sc*0.7,y+(m.y+0.5)*sc-sc*0.7,sc*1.4,sc*1.4);
   ctx.fillStyle='#9cf4ff'; for(const dp of world.drops) ctx.fillRect(x+(dp.x+0.5)*sc-sc*0.6,y+(dp.y+0.5)*sc-sc*0.6,sc*1.2,sc*1.2);
   for(const p of G.players){
@@ -2700,7 +2777,7 @@ window.addEventListener('keydown',e=>{
     if(dg){ e.preventDefault(); quizInput(kbOwner,dg[1]); return; }
     if(code==='Backspace'){ e.preventDefault(); quizInput(kbOwner,'del'); return; }
     if((code==='Enter'||code==='NumpadEnter') && G.mode===1){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); return; }
-    if(code==='Escape'){ e.preventDefault(); if(quizzes[kbOwner]) closeQuiz(kbOwner,true); return; }
+    if(code==='Escape'){ e.preventDefault(); if(quizzes[kbOwner] && !quizzes[kbOwner].jail) closeQuiz(kbOwner,true); return; }
     if(G.mode===1){ if(code==='Space'){ e.preventDefault(); if(!e.repeat) submitQuiz(kbOwner); } else if(/^Arrow|^Shift/.test(code)) e.preventDefault(); return; }
     // the solver confirms with their own action key (1P Space, 2P Enter); the other key stays with the free player
     const isEnter=code==='Enter'||code==='NumpadEnter';
